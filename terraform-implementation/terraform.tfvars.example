@@ -1,0 +1,49 @@
+# Example Terraform Variables
+# Copy this file to terraform.tfvars and customize the values
+
+# Project Configuration
+project_name = "webapp"
+environment  = "prod"
+
+# Azure Regions
+primary_location   = "East US"
+secondary_location = "West US 2"
+
+# High Availability Configuration
+# Set to true for Availability Zones (99.99% SLA) or false for Availability Sets (99.95% SLA)
+use_availability_zones = true
+
+# Network Configuration - Primary Region
+primary_vnet_address_space = ["10.0.0.0/16"]
+primary_web_subnet_prefix  = "10.0.1.0/24"
+primary_app_subnet_prefix  = "10.0.2.0/24"
+primary_data_subnet_prefix = "10.0.3.0/24"
+
+# Network Configuration - Secondary Region
+secondary_vnet_address_space = ["10.1.0.0/16"]
+secondary_web_subnet_prefix  = "10.1.1.0/24"
+secondary_app_subnet_prefix  = "10.1.2.0/24"
+secondary_data_subnet_prefix = "10.1.3.0/24"
+
+# Virtual Machine Configuration
+vm_admin_username = "azureadmin"
+# Note: VM password is generated automatically for security
+
+# VM Sizes (adjust based on your performance requirements)
+vm_size_web  = "Standard_D2s_v3"  # 2 vCPU, 8 GB RAM
+vm_size_app  = "Standard_D4s_v3"  # 4 vCPU, 16 GB RAM
+vm_size_data = "Standard_D4s_v3"  # 4 vCPU, 16 GB RAM
+
+# Security Configuration
+# Restrict this to your organization's IP ranges in production
+allowed_ip_ranges = ["0.0.0.0/0"]
+
+# Resource Tags
+tags = {
+  Project      = "Azure Multi-Tier DR"
+  Environment  = "Production"
+  CreatedBy    = "Terraform"
+  Purpose      = "Disaster Recovery Demo"
+  CostCenter   = "IT-Infrastructure"
+  Owner        = "Platform Team"
+}

@@ -1,0 +1,32 @@
+Resource Category,Resource Type,Region,Quantity,Unit Cost Low,Unit Cost High,Monthly Cost Low,Monthly Cost High,Annual Cost Low,Annual Cost High,Notes
+Virtual Machines,Web Tier VM (D2s_v3),East US,1,$70,$140,$70,$140,$840,$1680,Primary region web server
+Virtual Machines,App Tier VM (D4s_v3),East US,1,$140,$280,$140,$280,$1680,$3360,Primary region app server
+Virtual Machines,Data Tier VM (D4s_v3),East US,1,$140,$280,$140,$280,$1680,$3360,Primary region database server
+Virtual Machines,Web Tier VM (D2s_v3),West US 2,1,$35,$70,$35,$70,$420,$840,Secondary region web server (standby)
+Virtual Machines,App Tier VM (D4s_v3),West US 2,1,$70,$140,$70,$140,$840,$1680,Secondary region app server (standby)
+Virtual Machines,Data Tier VM (D4s_v3),West US 2,1,$70,$140,$70,$140,$840,$1680,Secondary region database server (standby)
+Storage,Premium SSD OS Disk,East US,3,$15,$20,$45,$60,$540,$720,127GB OS disks for primary VMs
+Storage,Premium SSD Data Disk,East US,2,$15,$20,$30,$40,$360,$480,128GB data disks for database
+Storage,Cache Storage Account,East US,1,$5,$10,$5,$10,$60,$120,Site Recovery cache storage
+Storage,Target Storage (GRS),West US 2,1,$15,$25,$15,$25,$180,$300,Site Recovery target with GRS
+Storage,Replicated Storage,West US 2,1,$90,$120,$90,$120,$1080,$1440,Replicated VM disks with GRS
+Networking,Public Load Balancer,East US,1,$18,$25,$18,$25,$216,$300,External load balancer primary
+Networking,Internal Load Balancer,East US,1,$18,$25,$18,$25,$216,$300,Internal load balancer primary
+Networking,Public Load Balancer,West US 2,1,$18,$25,$18,$25,$216,$300,External load balancer secondary
+Networking,Internal Load Balancer,West US 2,1,$18,$25,$18,$25,$216,$300,Internal load balancer secondary
+Networking,Traffic Manager,Global,1,$5,$10,$5,$10,$60,$120,DNS-based global load balancing
+Networking,VNet Peering,Cross-region,1,$5,$20,$5,$20,$60,$240,Primary to secondary region connection
+Site Recovery,VM Protection,Both Regions,6,$25,$25,$150,$150,$1800,$1800,Azure Site Recovery per VM
+Site Recovery,Recovery Vault,East US,1,$10,$20,$10,$20,$120,$240,Backup policies and retention
+Site Recovery,App Consistent Snapshots,East US,1,$15,$30,$15,$30,$180,$360,4-hour frequency snapshots
+Database,Cross-Region Bandwidth,Cross-region,1,$10,$25,$10,$25,$120,$300,MySQL replication traffic
+Database,Backup Storage,Both Regions,1,$5,$15,$5,$15,$60,$180,Automated database backups
+Database,Monitoring Scripts,Both Regions,1,$3,$8,$3,$8,$36,$96,Health check automation
+Monitoring,Boot Diagnostics,Both Regions,6,$1,$2,$5,$10,$60,$120,VM troubleshooting logs
+Monitoring,NSG Flow Logs,Both Regions,4,$2,$4,$8,$15,$96,$180,Network security monitoring
+Monitoring,Recovery Vault Diagnostics,East US,1,$5,$12,$5,$12,$60,$144,DR monitoring and alerts
+Monitoring,Health Probe Monitoring,Both Regions,4,$1,$2,$3,$8,$36,$96,Load balancer health checks
+Data Transfer,Outbound Internet,Both Regions,1,$5,$44,$5,$44,$60,$528,Internet egress traffic
+Data Transfer,Cross-Region Replication,Cross-region,1,$1,$4,$1,$4,$12,$48,Site Recovery data transfer
+Data Transfer,Database Replication,Cross-region,1,$1,$2,$1,$2,$12,$24,MySQL replication transfer
+TOTAL,,,,$1240,$2180,$14880,$26160,Complete architecture monthly/annual costs
