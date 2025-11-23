@@ -30,11 +30,15 @@ param primaryVnetId string
 @description('Secondary VNet ID for network mapping')
 param secondaryVnetId string
 
-// Recovery Services Vault
+// Recovery Services Vault (Primary Region - East US)
 resource recoveryServicesVault 'Microsoft.RecoveryServices/vaults@2023-08-01' = {
-  name: '${projectName}-${environment}-rsv'
+  name: '${projectName}-${environment}-eastus-recovery-vault'
   location: location
-  tags: tags
+  tags: merge(tags, {
+    Purpose: 'Cross-region disaster recovery'
+    SourceRegion: 'East US'
+    TargetRegion: 'West US 2'
+  })
   sku: {
     name: 'Standard'
   }
@@ -53,10 +57,10 @@ resource vaultStorageConfig 'Microsoft.RecoveryServices/vaults/backupstorageconf
   }
 }
 
-// Site Recovery Fabric for Primary Region
+// Site Recovery Fabric for Primary Region (East US)
 resource primaryFabric 'Microsoft.RecoveryServices/vaults/replicationFabrics@2023-08-01' = {
   parent: recoveryServicesVault
-  name: '${projectName}-primary-fabric'
+  name: '${projectName}-${environment}-primary-eastus-fabric'
   properties: {
     customDetails: {
       instanceType: 'Azure'
@@ -65,10 +69,10 @@ resource primaryFabric 'Microsoft.RecoveryServices/vaults/replicationFabrics@202
   }
 }
 
-// Site Recovery Fabric for Secondary Region
+// Site Recovery Fabric for Secondary Region (West US 2)
 resource secondaryFabric 'Microsoft.RecoveryServices/vaults/replicationFabrics@2023-08-01' = {
   parent: recoveryServicesVault
-  name: '${projectName}-secondary-fabric'
+  name: '${projectName}-${environment}-secondary-westus2-fabric'
   properties: {
     customDetails: {
       instanceType: 'Azure'
@@ -77,10 +81,10 @@ resource secondaryFabric 'Microsoft.RecoveryServices/vaults/replicationFabrics@2
   }
 }
 
-// Protection Container for Primary Region
+// Protection Container for Primary Region (East US)
 resource primaryProtectionContainer 'Microsoft.RecoveryServices/vaults/replicationFabrics/replicationProtectionContainers@2023-08-01' = {
   parent: primaryFabric
-  name: '${projectName}-primary-protection-container'
+  name: '${projectName}-${environment}-primary-eastus-protection-container'
   properties: {
     providerSpecificDetails: [
       {
@@ -90,10 +94,10 @@ resource primaryProtectionContainer 'Microsoft.RecoveryServices/vaults/replicati
   }
 }
 
-// Protection Container for Secondary Region
+// Protection Container for Secondary Region (West US 2)
 resource secondaryProtectionContainer 'Microsoft.RecoveryServices/vaults/replicationFabrics/replicationProtectionContainers@2023-08-01' = {
   parent: secondaryFabric
-  name: '${projectName}-secondary-protection-container'
+  name: '${projectName}-${environment}-secondary-westus2-protection-container'
   properties: {
     providerSpecificDetails: [
       {
@@ -103,24 +107,24 @@ resource secondaryProtectionContainer 'Microsoft.RecoveryServices/vaults/replica
   }
 }
 
-// Replication Policy
+// Replication Policy (Cross-region: East US → West US 2)
 resource replicationPolicy 'Microsoft.RecoveryServices/vaults/replicationPolicies@2023-08-01' = {
   parent: recoveryServicesVault
-  name: '${projectName}-policy'
+  name: '${projectName}-${environment}-eastus-to-westus2-replication-policy'
   properties: {
     providerSpecificDetails: {
       instanceType: 'A2A'
-      recoveryPointRetentionInMinutes: 1440 // 24 hours
-      appConsistentFrequencyInMinutes: 240  // 4 hours
-      multiVmSyncStatus: 'Enable'
+      recoveryPointRetentionInMinutes: 1440 // 24 hours retention
+      appConsistentFrequencyInMinutes: 240  // 4 hours app-consistent snapshots
+      multiVmSyncStatus: 'Enable'            // Enable multi-VM consistency
     }
   }
 }
 
-// Protection Container Mapping
+// Protection Container Mapping (Primary → Secondary)
 resource protectionContainerMapping 'Microsoft.RecoveryServices/vaults/replicationFabrics/replicationProtectionContainers/replicationProtectionContainerMappings@2023-08-01' = {
   parent: primaryProtectionContainer
-  name: '${projectName}-container-mapping'
+  name: '${projectName}-${environment}-eastus-to-westus2-container-mapping'
   properties: {
     targetProtectionContainerId: secondaryProtectionContainer.id
     policyId: replicationPolicy.id
@@ -130,9 +134,9 @@ resource protectionContainerMapping 'Microsoft.RecoveryServices/vaults/replicati
   }
 }
 
-// Network Mapping from Primary to Secondary
+// Network Mapping (East US VNet → West US 2 VNet)
 resource networkMapping 'Microsoft.RecoveryServices/vaults/replicationFabrics/replicationNetworks/replicationNetworkMappings@2023-08-01' = {
-  name: '${recoveryServicesVault.name}/${primaryFabric.name}/${last(split(primaryVnetId, '/'))}/primary-to-secondary-network-mapping'
+  name: '${recoveryServicesVault.name}/${primaryFabric.name}/${last(split(primaryVnetId, '/'))}/eastus-to-westus2-vnet-mapping'
   properties: {
     recoveryFabricName: secondaryFabric.name
     recoveryNetworkId: secondaryVnetId
@@ -150,7 +154,7 @@ resource networkMapping 'Microsoft.RecoveryServices/vaults/replicationFabrics/re
 // Diagnostic Settings for the Recovery Services Vault
 resource diagnosticSettings 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = {
   scope: recoveryServicesVault
-  name: '${projectName}-${environment}-rsv-diagnostics'
+  name: '${projectName}-${environment}-recovery-vault-diagnostics'
   properties: {
     logs: [
       {
@@ -176,11 +180,14 @@ resource diagnosticSettings 'Microsoft.Insights/diagnosticSettings@2021-05-01-pr
   }
 }
 
-// Log Analytics Workspace for monitoring
+// Log Analytics Workspace for Site Recovery monitoring
 resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2023-09-01' = {
-  name: '${projectName}-${environment}-logs'
+  name: '${projectName}-${environment}-siterecovery-logs'
   location: location
-  tags: tags
+  tags: merge(tags, {
+    Purpose: 'Site Recovery monitoring and diagnostics'
+    Component: 'Log Analytics'
+  })
   properties: {
     sku: {
       name: 'PerGB2018'

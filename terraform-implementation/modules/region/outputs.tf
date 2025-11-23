@@ -186,6 +186,50 @@ output "availability_sets" {
   }
 }
 
+# VMSS outputs
+output "web_vmss_id" {
+  description = "The ID of the web tier VMSS"
+  value       = var.enable_vmss && !var.is_dr_region && length(azurerm_linux_virtual_machine_scale_set.web) > 0 ? azurerm_linux_virtual_machine_scale_set.web[0].id : null
+}
+
+output "app_vmss_id" {
+  description = "The ID of the app tier VMSS"
+  value       = var.enable_vmss && !var.is_dr_region && length(azurerm_linux_virtual_machine_scale_set.app) > 0 ? azurerm_linux_virtual_machine_scale_set.app[0].id : null
+}
+
+output "web_vmss_name" {
+  description = "The name of the web tier VMSS"
+  value       = var.enable_vmss && !var.is_dr_region && length(azurerm_linux_virtual_machine_scale_set.web) > 0 ? azurerm_linux_virtual_machine_scale_set.web[0].name : null
+}
+
+output "app_vmss_name" {
+  description = "The name of the app tier VMSS"
+  value       = var.enable_vmss && !var.is_dr_region && length(azurerm_linux_virtual_machine_scale_set.app) > 0 ? azurerm_linux_virtual_machine_scale_set.app[0].name : null
+}
+
+# Auto-scaling outputs
+output "web_autoscale_setting_id" {
+  description = "The ID of the web tier auto-scale setting"
+  value       = var.enable_vmss && var.enable_auto_scaling && !var.is_dr_region && length(azurerm_monitor_autoscale_setting.web) > 0 ? azurerm_monitor_autoscale_setting.web[0].id : null
+}
+
+output "app_autoscale_setting_id" {
+  description = "The ID of the app tier auto-scale setting"
+  value       = var.enable_vmss && var.enable_auto_scaling && !var.is_dr_region && length(azurerm_monitor_autoscale_setting.app) > 0 ? azurerm_monitor_autoscale_setting.app[0].id : null
+}
+
+# SSH key output for VMSS
+output "vmss_ssh_private_key" {
+  description = "The private SSH key for VMSS instances (sensitive)"
+  value       = var.enable_vmss && !var.is_dr_region && length(tls_private_key.vmss_ssh) > 0 ? tls_private_key.vmss_ssh[0].private_key_pem : null
+  sensitive   = true
+}
+
+output "vmss_ssh_public_key" {
+  description = "The public SSH key for VMSS instances"
+  value       = var.enable_vmss && !var.is_dr_region && length(tls_private_key.vmss_ssh) > 0 ? tls_private_key.vmss_ssh[0].public_key_openssh : null
+}
+
 output "region_summary" {
   description = "Summary of the region deployment"
   value = {
@@ -193,9 +237,14 @@ output "region_summary" {
     region_suffix          = var.region_suffix
     is_dr_region           = var.is_dr_region
     use_availability_zones = var.use_availability_zones
-    web_vm_count           = length(azurerm_linux_virtual_machine.web)
-    app_vm_count           = length(azurerm_linux_virtual_machine.app)
-    data_vm_count          = length(azurerm_linux_virtual_machine.data)
-    total_vm_count         = length(azurerm_linux_virtual_machine.web) + length(azurerm_linux_virtual_machine.app) + length(azurerm_linux_virtual_machine.data)
+    enable_vmss           = var.enable_vmss
+    vmss_orchestration_mode = var.vmss_orchestration_mode
+    enable_auto_scaling   = var.enable_auto_scaling
+    web_vm_count          = var.enable_vmss ? 0 : length(azurerm_linux_virtual_machine.web)
+    app_vm_count          = var.enable_vmss ? 0 : length(azurerm_linux_virtual_machine.app)
+    data_vm_count         = length(azurerm_linux_virtual_machine.data) # Data tier always uses individual VMs
+    web_vmss_enabled      = var.enable_vmss && !var.is_dr_region && length(azurerm_linux_virtual_machine_scale_set.web) > 0
+    app_vmss_enabled      = var.enable_vmss && !var.is_dr_region && length(azurerm_linux_virtual_machine_scale_set.app) > 0
+    total_vm_count        = var.enable_vmss ? length(azurerm_linux_virtual_machine.data) : (length(azurerm_linux_virtual_machine.web) + length(azurerm_linux_virtual_machine.app) + length(azurerm_linux_virtual_machine.data))
   }
 }

@@ -13,6 +13,36 @@ param secondaryLocation = 'West US 2'
 // Set to true for Availability Zones (99.99% SLA) or false for Availability Sets (99.95% SLA)
 param useAvailabilityZones = true
 
+// VMSS Configuration
+param enableVMSS = false          // Set to true to enable Virtual Machine Scale Sets
+param enableAutoScaling = false   // Set to true to enable auto-scaling (requires enableVMSS = true)
+
+// Auto-scaling Configuration
+param autoScalingConfig = {
+  webTier: {
+    minInstances: 2
+    maxInstances: 10
+    defaultInstances: 3
+    scaleOutCpuThreshold: 75    // Scale out when CPU > 75%
+    scaleInCpuThreshold: 25     // Scale in when CPU < 25%
+    scaleOutMemoryThreshold: 80 // Scale out when memory usage > 80%
+    scaleInMemoryThreshold: 30  // Scale in when memory usage < 30%
+    scaleOutCooldown: 'PT5M'    // 5 minutes
+    scaleInCooldown: 'PT10M'    // 10 minutes
+  }
+  appTier: {
+    minInstances: 2
+    maxInstances: 8
+    defaultInstances: 2
+    scaleOutCpuThreshold: 70    // Scale out when CPU > 70%
+    scaleInCpuThreshold: 30     // Scale in when CPU < 30%
+    scaleOutMemoryThreshold: 75 // Scale out when memory usage > 75%
+    scaleInMemoryThreshold: 35  // Scale in when memory usage < 35%
+    scaleOutCooldown: 'PT5M'    // 5 minutes
+    scaleInCooldown: 'PT15M'    // 15 minutes
+  }
+}
+
 // Network Configuration - Primary Region
 param primaryVnetAddressSpace = ['10.0.0.0/16']
 param primaryWebSubnetPrefix = '10.0.1.0/24'

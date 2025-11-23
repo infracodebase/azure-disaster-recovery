@@ -1,4 +1,4 @@
-# Example Terraform Variables
+# Example Terraform Variables for Azure Multi-Tier Architecture with VMSS
 # Copy this file to terraform.tfvars and customize the values
 
 # Project Configuration
@@ -12,6 +12,37 @@ secondary_location = "West US 2"
 # High Availability Configuration
 # Set to true for Availability Zones (99.99% SLA) or false for Availability Sets (99.95% SLA)
 use_availability_zones = true
+
+# VMSS Configuration
+enable_vmss             = true                # Enable Virtual Machine Scale Sets
+vmss_orchestration_mode = "Flexible"          # "Flexible" (recommended) or "Uniform"
+enable_auto_scaling     = true                # Enable auto-scaling rules
+
+# Auto-scaling Configuration
+auto_scaling_config = {
+  web_tier = {
+    min_instances               = 2
+    max_instances               = 10
+    default_instances           = 3
+    scale_out_cpu_threshold     = 75    # Scale out when CPU > 75%
+    scale_in_cpu_threshold      = 25    # Scale in when CPU < 25%
+    scale_out_memory_threshold  = 80    # Scale out when memory usage > 80%
+    scale_in_memory_threshold   = 30    # Scale in when memory usage < 30%
+    scale_out_cooldown          = "PT5M"  # 5 minutes
+    scale_in_cooldown           = "PT10M" # 10 minutes
+  }
+  app_tier = {
+    min_instances               = 2
+    max_instances               = 8
+    default_instances           = 2
+    scale_out_cpu_threshold     = 70    # Scale out when CPU > 70%
+    scale_in_cpu_threshold      = 30    # Scale in when CPU < 30%
+    scale_out_memory_threshold  = 75    # Scale out when memory usage > 75%
+    scale_in_memory_threshold   = 35    # Scale in when memory usage < 35%
+    scale_out_cooldown          = "PT5M"  # 5 minutes
+    scale_in_cooldown           = "PT15M" # 15 minutes
+  }
+}
 
 # Network Configuration - Primary Region
 primary_vnet_address_space = ["10.0.0.0/16"]
@@ -40,10 +71,11 @@ allowed_ip_ranges = ["0.0.0.0/0"]
 
 # Resource Tags
 tags = {
-  Project      = "Azure Multi-Tier DR"
+  Project      = "Azure Multi-Tier DR with VMSS"
   Environment  = "Production"
   CreatedBy    = "Terraform"
-  Purpose      = "Disaster Recovery Demo"
+  Purpose      = "Auto-scaling Web Application"
   CostCenter   = "IT-Infrastructure"
   Owner        = "Platform Team"
+  Architecture = "Multi-tier with VMSS"
 }

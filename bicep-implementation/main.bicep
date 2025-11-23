@@ -26,6 +26,38 @@ param secondaryLocation string = 'West US 2'
 @description('Whether to use Availability Zones (true) or Availability Sets (false)')
 param useAvailabilityZones bool = true
 
+@description('Enable Virtual Machine Scale Sets')
+param enableVMSS bool = false
+
+@description('Enable auto-scaling for VMSS')
+param enableAutoScaling bool = false
+
+@description('Auto-scaling configuration for VMSS')
+param autoScalingConfig object = {
+  webTier: {
+    minInstances: 2
+    maxInstances: 10
+    defaultInstances: 3
+    scaleOutCpuThreshold: 75
+    scaleInCpuThreshold: 25
+    scaleOutMemoryThreshold: 80
+    scaleInMemoryThreshold: 30
+    scaleOutCooldown: 'PT5M'
+    scaleInCooldown: 'PT10M'
+  }
+  appTier: {
+    minInstances: 2
+    maxInstances: 8
+    defaultInstances: 2
+    scaleOutCpuThreshold: 70
+    scaleInCpuThreshold: 30
+    scaleOutMemoryThreshold: 75
+    scaleInMemoryThreshold: 35
+    scaleOutCooldown: 'PT5M'
+    scaleInCooldown: 'PT15M'
+  }
+}
+
 @description('Admin username for virtual machines')
 @minLength(3)
 @maxLength(20)
@@ -118,6 +150,9 @@ module primaryRegion 'modules/region.bicep' = {
     vmSizeApp: vmSizeApp
     vmSizeData: vmSizeData
     useAvailabilityZones: useAvailabilityZones
+    enableVMSS: enableVMSS
+    enableAutoScaling: enableAutoScaling
+    autoScalingConfig: autoScalingConfig
     isDRRegion: false
     tags: tags
   }
@@ -142,6 +177,9 @@ module secondaryRegion 'modules/region.bicep' = {
     vmSizeApp: vmSizeApp
     vmSizeData: vmSizeData
     useAvailabilityZones: useAvailabilityZones
+    enableVMSS: enableVMSS
+    enableAutoScaling: enableAutoScaling
+    autoScalingConfig: autoScalingConfig
     isDRRegion: true
     tags: tags
   }
@@ -362,6 +400,10 @@ output primaryRegion object = {
   webVmNames: primaryRegion.outputs.webVmNames
   appVmNames: primaryRegion.outputs.appVmNames
   dataVmNames: primaryRegion.outputs.dataVmNames
+  webVMSSName: primaryRegion.outputs.webVMSSName
+  appVMSSName: primaryRegion.outputs.appVMSSName
+  autoScalingEnabled: enableAutoScaling
+  vmssDeploymentSummary: primaryRegion.outputs.vmssDeploymentSummary
 }
 
 output secondaryRegion object = {

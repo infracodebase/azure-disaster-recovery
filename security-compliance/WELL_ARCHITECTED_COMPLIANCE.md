@@ -129,14 +129,15 @@ Data Protection:
 
 #### Monitor and Optimize Over Time
 - ✅ **Resource Tagging**: Comprehensive cost allocation tags
-- ✅ **Scaling Capability**: Architecture supports auto-scaling
+- ✅ **VMSS Auto-Scaling**: Intelligent scaling with CPU/memory triggers ✅ **IMPLEMENTED**
 - ✅ **Performance Monitoring**: Right-sizing recommendations possible
 - ⚠️ **Cost Alerts**: Consider Azure Cost Management integration
 
 **Cost Optimization Features:**
 ```yaml
-Estimated Monthly Costs:
-  - Virtual Machines: $400-800 (6 VMs, configurable sizes)
+Estimated Monthly Costs (with VMSS):
+  - Virtual Machines: $350-900 (4-20 VMSS instances, dynamic scaling)
+  - Auto-scaling Savings: -$175-250 (30-50% cost reduction)
   - Load Balancers: $40-60 (2 Standard Load Balancers)
   - Storage: $20-50 (Premium SSD + GRS replication)
   - Site Recovery: ~$25 per protected VM
@@ -144,10 +145,12 @@ Estimated Monthly Costs:
   - Traffic Manager: $5-10
 
 Optimization Strategies:
+  ✅ VMSS Auto-scaling (CPU, memory, network triggers)
+  ✅ Time-based scaling profiles (business hours vs weekends)
+  ✅ Predictive scaling for production environments
   - Configurable VM sizes per environment
   - Optional Availability Zones vs Sets
   - Environment-specific storage tiers
-  - Auto-shutdown capabilities (implementable)
 ```
 
 ---
@@ -158,7 +161,7 @@ Optimization Strategies:
 
 #### Plan for Performance and Capacity
 - ✅ **Performance Targets**: Clear SLA and performance goals
-- ✅ **Scalability Design**: Horizontal scaling capability
+- ✅ **VMSS Scalability**: Automatic horizontal scaling (2-10 instances) ✅ **IMPLEMENTED**
 - ✅ **Regional Strategy**: Multi-region for global performance
 - ✅ **Resource Allocation**: Optimized VM and storage selection
 

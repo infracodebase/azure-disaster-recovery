@@ -21,6 +21,8 @@ terraform-implementation/
 │       ├── variables.tf              # Regional variables
 │       ├── outputs.tf                # Regional outputs
 │       ├── compute.tf                # VM and compute resources
+│       ├── vmss.tf                   # Virtual Machine Scale Sets
+│       ├── autoscaling.tf            # Auto-scaling rules and policies
 │       └── scripts/                  # VM initialization scripts
 │           ├── web-setup.sh          # Web tier configuration
 │           ├── app-setup.sh          # App tier configuration
@@ -83,7 +85,8 @@ az deployment sub create \
 ## 🏗️ Architecture Overview
 
 ### **Infrastructure Components**
-- **6 Virtual Machines** across 2 regions (3 per region)
+- **Virtual Machine Scale Sets (VMSS)** with auto-scaling (2-10 instances per tier)
+- **Individual VMs** for database tier (persistent storage requirements)
 - **Multi-tier architecture** (Web, App, Data)
 - **Cross-region disaster recovery** with Azure Site Recovery
 - **Database replication** with MySQL master-slave
@@ -92,10 +95,11 @@ az deployment sub create \
 
 ### **Key Features**
 - ✅ **99.99% SLA** with Availability Zones
+- ✅ **Intelligent Auto-Scaling** with CPU, memory, and network triggers
 - ✅ **Complete DR** with VM replication and database replication
 - ✅ **Security hardening** with NSGs and encryption
 - ✅ **Monitoring** with health checks and diagnostics
-- ✅ **Cost optimization** with configurable VM sizes
+- ✅ **Cost optimization** with dynamic scaling and configurable thresholds
 
 ---
 
@@ -133,6 +137,47 @@ secondary_web_subnet_prefix  = "10.1.1.0/24"
 secondary_app_subnet_prefix  = "10.1.2.0/24"
 secondary_data_subnet_prefix = "10.1.3.0/24"
 ```
+
+### **VMSS Auto-Scaling Configuration**
+```hcl
+# Enable VMSS with auto-scaling
+enable_vmss         = true
+enable_auto_scaling = true
+
+# Auto-scaling configuration
+auto_scaling_config = {
+  web_tier = {
+    min_instances               = 2
+    max_instances               = 10
+    default_instances           = 3
+    scale_out_cpu_threshold     = 75    # Scale out when CPU > 75%
+    scale_in_cpu_threshold      = 25    # Scale in when CPU < 25%
+    scale_out_memory_threshold  = 80    # Scale out when memory > 80%
+    scale_in_memory_threshold   = 30    # Scale in when memory < 30%
+    scale_out_cooldown          = "PT5M"  # 5 minutes
+    scale_in_cooldown           = "PT10M" # 10 minutes
+  }
+  app_tier = {
+    min_instances               = 2
+    max_instances               = 8
+    default_instances           = 2
+    scale_out_cpu_threshold     = 70
+    scale_in_cpu_threshold      = 30
+    scale_out_memory_threshold  = 75
+    scale_in_memory_threshold   = 35
+    scale_out_cooldown          = "PT5M"
+    scale_in_cooldown           = "PT15M"
+  }
+}
+```
+
+### **VMSS Features**
+- **Flexible Orchestration**: Better fault tolerance and mixed instance support
+- **Intelligent Scaling**: CPU, memory, and network traffic triggers
+- **Time-based Profiles**: Different scaling behaviors for business hours vs. weekends
+- **Predictive Scaling**: Machine learning-based scaling for production environments
+- **Health Monitoring**: Application health extensions with automatic instance replacement
+- **Cost Optimization**: Dynamic scaling reduces costs by 30-50% during off-hours
 
 ---
 

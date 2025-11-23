@@ -12,10 +12,12 @@ bicep-implementation/
 ├── README.md                          # This file
 ├── main.bicep                         # Main Bicep template
 ├── main.bicepparam                    # Bicep parameters file
+├── VMSS_GUIDE.md                      # VMSS implementation guide
 ├── .gitignore                         # Git ignore patterns
 ├── modules/                           # Reusable Bicep modules
 │   ├── region.bicep                   # Regional deployment module
 │   ├── vm.bicep                       # Virtual machine template
+│   ├── vmss.bicep                     # Virtual Machine Scale Sets module
 │   ├── recovery-services.bicep        # Site Recovery configuration
 │   ├── traffic-manager.bicep          # Global load balancing
 │   └── vnet-peering.bicep            # Cross-region networking
@@ -66,19 +68,27 @@ az deployment sub create \
 ## 🏗️ Architecture Overview
 
 ### **Infrastructure Components**
-- **6 Virtual Machines** across 2 regions (3 per region)
+- **Flexible Deployment** - Individual VMs or VMSS with auto-scaling
 - **Multi-tier architecture** (Web, App, Data)
 - **Cross-region disaster recovery** with Azure Site Recovery
 - **Database replication** with MySQL master-slave
 - **Global load balancing** with Azure Traffic Manager
 - **High availability** with Availability Zones
 
+### **VMSS Auto-scaling Features**
+- **🚀 Virtual Machine Scale Sets** for web and app tiers
+- **📊 Auto-scaling** based on CPU, memory, and network metrics
+- **⏰ Time-based scaling** profiles (business hours, weekends)
+- **💰 Cost optimization** through intelligent scaling (25-40% savings)
+- **🔍 Health monitoring** with application health extensions
+
 ### **Key Features**
 - ✅ **99.99% SLA** with Availability Zones
 - ✅ **Complete DR** with VM replication and database replication
 - ✅ **Security hardening** with NSGs and encryption
 - ✅ **Monitoring** with health checks and diagnostics
-- ✅ **Cost optimization** with configurable VM sizes
+- ✅ **Cost optimization** with configurable VM sizes and auto-scaling
+- ✅ **VMSS implementation** with Bicep-native auto-scaling rules
 
 ---
 
@@ -92,7 +102,32 @@ az deployment sub create \
 | `primaryLocation` | Primary Azure region | `East US` |
 | `secondaryLocation` | Secondary Azure region | `West US 2` |
 | `useAvailabilityZones` | Use AZ (true) or AS (false) | `true` |
+| `enableVMSS` | Enable VMSS deployment | `false` |
+| `enableAutoScaling` | Enable auto-scaling | `false` |
 | `vmAdminPassword` | VM administrator password | (required) |
+
+### **VMSS Configuration**
+```bicep
+// Enable VMSS with auto-scaling
+param enableVMSS = true
+param enableAutoScaling = true
+
+// Auto-scaling thresholds
+param autoScalingConfig = {
+  webTier: {
+    minInstances: 2
+    maxInstances: 10
+    scaleOutCpuThreshold: 75
+    scaleInCpuThreshold: 25
+  }
+  appTier: {
+    minInstances: 2
+    maxInstances: 8
+    scaleOutCpuThreshold: 70
+    scaleInCpuThreshold: 30
+  }
+}
+```
 
 ### **VM Size Configuration**
 ```bicep
@@ -222,7 +257,25 @@ az deployment sub what-if \
 
 ## 🛠️ Management Operations
 
-### **Scaling Operations**
+### **VMSS Operations**
+```bash
+# Enable VMSS with auto-scaling
+az deployment sub create \
+  --location "East US" \
+  --template-file main.bicep \
+  --parameters main.bicepparam \
+  --parameters enableVMSS=true enableAutoScaling=true
+
+# Manual scaling for testing
+az vmss scale --resource-group webapp-prod-primary-rg \
+  --name webapp-prod-primary-web-vmss --new-capacity 5
+
+# View autoscale settings
+az monitor autoscale show --resource-group webapp-prod-primary-rg \
+  --name webapp-prod-primary-web-autoscale
+```
+
+### **VM Size Updates**
 ```bash
 # Update VM sizes for cost optimization
 az deployment sub create \
@@ -264,17 +317,24 @@ az monitor activity-log list --resource-group <resource-group-name>
 
 ---
 
-## 📚 Bicep Resources
+## 📚 Documentation and Resources
+
+### **Implementation Guides**
+- [VMSS_GUIDE.md](./VMSS_GUIDE.md) - Complete VMSS implementation guide with auto-scaling
+- [../terraform-implementation/VMSS_GUIDE.md](../terraform-implementation/VMSS_GUIDE.md) - Terraform VMSS equivalent
+- [../cost-analysis/COST_BREAKDOWN.md](../cost-analysis/COST_BREAKDOWN.md) - Detailed cost analysis with VMSS
 
 ### **Official Documentation**
 - [Azure Bicep Documentation](https://docs.microsoft.com/en-us/azure/azure-resource-manager/bicep/)
 - [Bicep Language Reference](https://docs.microsoft.com/en-us/azure/azure-resource-manager/bicep/bicep-functions)
 - [Azure Resource Reference](https://docs.microsoft.com/en-us/azure/templates/)
+- [Azure VMSS Documentation](https://docs.microsoft.com/en-us/azure/virtual-machine-scale-sets/)
 
 ### **Best Practices**
 - [Bicep Best Practices](https://docs.microsoft.com/en-us/azure/azure-resource-manager/bicep/best-practices)
 - [Azure Naming Conventions](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/ready/azure-best-practices/naming-and-tagging)
 - [Security Best Practices](https://docs.microsoft.com/en-us/azure/azure-resource-manager/bicep/best-practices#security)
+- [VMSS Auto-scaling Best Practices](https://docs.microsoft.com/en-us/azure/azure-monitor/autoscale/autoscale-best-practices)
 
 ---
 

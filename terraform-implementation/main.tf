@@ -54,6 +54,12 @@ module "primary_region" {
   vm_admin_password      = random_password.vm_password.result
   use_availability_zones = var.use_availability_zones
 
+  # VMSS and Auto-scaling configuration
+  enable_vmss              = var.enable_vmss
+  vmss_orchestration_mode  = var.vmss_orchestration_mode
+  enable_auto_scaling      = var.enable_auto_scaling
+  auto_scaling_config      = var.auto_scaling_config
+
   tags = var.tags
 }
 
@@ -73,6 +79,12 @@ module "secondary_region" {
   vm_admin_password      = random_password.vm_password.result
   use_availability_zones = var.use_availability_zones
   is_dr_region           = true
+
+  # VMSS and Auto-scaling configuration
+  enable_vmss              = var.enable_vmss
+  vmss_orchestration_mode  = var.vmss_orchestration_mode
+  enable_auto_scaling      = var.enable_auto_scaling
+  auto_scaling_config      = var.auto_scaling_config
 
   tags = var.tags
 }

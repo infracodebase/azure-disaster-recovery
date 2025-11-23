@@ -137,3 +137,56 @@ variable "tags" {
     Purpose     = "Multi-tier Web Application"
   }
 }
+
+# VMSS Configuration
+variable "enable_vmss" {
+  description = "Enable Virtual Machine Scale Sets instead of individual VMs"
+  type        = bool
+  default     = false
+}
+
+variable "vmss_orchestration_mode" {
+  description = "Orchestration mode for VMSS: Flexible (recommended) or Uniform (legacy)"
+  type        = string
+  default     = "Flexible"
+  validation {
+    condition     = contains(["Flexible", "Uniform"], var.vmss_orchestration_mode)
+    error_message = "Orchestration mode must be either 'Flexible' or 'Uniform'."
+  }
+}
+
+# Auto-scaling Configuration
+variable "enable_auto_scaling" {
+  description = "Enable auto-scaling for Virtual Machine Scale Sets"
+  type        = bool
+  default     = false
+}
+
+variable "auto_scaling_config" {
+  description = "Auto-scaling configuration for VMSS"
+  type = object({
+    web_tier = optional(object({
+      min_instances        = optional(number, 2)
+      max_instances        = optional(number, 10)
+      default_instances    = optional(number, 2)
+      scale_out_cpu_threshold = optional(number, 75)
+      scale_in_cpu_threshold  = optional(number, 25)
+      scale_out_memory_threshold = optional(number, 80)
+      scale_in_memory_threshold  = optional(number, 30)
+      scale_out_cooldown   = optional(string, "PT5M")
+      scale_in_cooldown    = optional(string, "PT10M")
+    }))
+    app_tier = optional(object({
+      min_instances        = optional(number, 2)
+      max_instances        = optional(number, 8)
+      default_instances    = optional(number, 2)
+      scale_out_cpu_threshold = optional(number, 70)
+      scale_in_cpu_threshold  = optional(number, 30)
+      scale_out_memory_threshold = optional(number, 75)
+      scale_in_memory_threshold  = optional(number, 35)
+      scale_out_cooldown   = optional(string, "PT5M")
+      scale_in_cooldown    = optional(string, "PT15M")
+    }))
+  })
+  default = {}
+}

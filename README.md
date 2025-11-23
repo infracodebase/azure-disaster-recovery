@@ -48,12 +48,14 @@ This repository contains a complete, enterprise-grade implementation of a multi-
 ```
 
 ### **Core Components**
-- **6 Virtual Machines** (3 per region) with auto-scaling capability
+- **Virtual Machine Scale Sets (VMSS)** with intelligent auto-scaling (2-10 instances)
+- **Individual VMs** for database tier (persistent storage requirements)
 - **Azure Site Recovery** for complete VM-level disaster recovery
 - **MySQL Master-Slave Replication** across regions
 - **Azure Traffic Manager** for global load balancing
 - **Geo-Redundant Storage** for data protection
 - **Enhanced Network Security** with micro-segmentation
+- **CPU & Memory-based Auto-scaling** with predictive capabilities
 
 ---
 
@@ -68,6 +70,8 @@ This repository contains a complete, enterprise-grade implementation of a multi-
 │   ├── 📁 modules/region/             # Reusable regional module
 │   │   ├── 📄 main.tf                 # Regional infrastructure
 │   │   ├── 📄 compute.tf              # VM and compute resources
+│   │   ├── 📄 vmss.tf                 # Virtual Machine Scale Sets
+│   │   ├── 📄 autoscaling.tf          # Auto-scaling rules and policies
 │   │   ├── 📄 outputs.tf              # Regional outputs
 │   │   └── 📁 scripts/               # VM initialization scripts
 │   └── 📄 README.md                  # Terraform deployment guide
@@ -198,7 +202,9 @@ Following the optimization guide can reduce costs to **$1,500/month** while main
 ### **Performance & Scalability**
 - ⚡ **Premium Storage** for optimal performance
 - 🔀 **Load Balancing** across multiple tiers
-- 📊 **Auto-Scaling** capabilities
+- 📊 **Intelligent Auto-Scaling** with CPU, memory, and network triggers
+- 🤖 **Predictive Scaling** for production workloads
+- 🕐 **Time-based Scaling** profiles (business hours, weekends)
 - 🌐 **Global Load Balancing** with Traffic Manager
 
 ---
@@ -290,16 +296,25 @@ The implementation provides complete architectural fidelity with:
 - **Quarterly**: DR testing and cost optimization review
 - **Annually**: Complete architecture and security review
 
-### **Scaling Operations**
+### **VMSS Auto-Scaling Operations**
 ```bash
-# Scale VM count (requires VMSS implementation)
-terraform apply -var="vm_count=4"
+# Enable VMSS with auto-scaling
+terraform apply -var="enable_vmss=true" -var="enable_auto_scaling=true"
+
+# Configure custom scaling thresholds
+terraform apply -var='auto_scaling_config={
+  web_tier = {
+    min_instances = 2
+    max_instances = 10
+    scale_out_cpu_threshold = 75
+  }
+}'
 
 # Update VM sizes for cost optimization
 terraform apply -var="vm_size_web=Standard_D1s_v3"
 
-# Enable auto-scaling (requires configuration)
-terraform apply -var="enable_auto_scaling=true"
+# Manual scaling for testing (Azure CLI)
+az vmss scale --name webapp-prod-primary-web-vmss --new-capacity 5
 ```
 
 ---

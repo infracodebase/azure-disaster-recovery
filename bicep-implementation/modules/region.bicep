@@ -47,6 +47,15 @@ param vmSizeData string
 @description('Use Availability Zones')
 param useAvailabilityZones bool
 
+@description('Enable VMSS deployment')
+param enableVMSS bool = false
+
+@description('Enable auto-scaling')
+param enableAutoScaling bool = false
+
+@description('Auto-scaling configuration')
+param autoScalingConfig object = {}
+
 @description('Is this a DR region')
 param isDRRegion bool
 
@@ -478,8 +487,8 @@ resource dataDisks 'Microsoft.Compute/disks@2023-10-02' = [for i in range(0, vmC
   }
 }]
 
-// Web Tier VMs
-module webVMs 'vm.bicep' = [for i in range(0, vmCount): if (!isDRRegion) {
+// Web Tier VMs (only deployed when VMSS is disabled)
+module webVMs 'vm.bicep' = [for i in range(0, vmCount): if (!isDRRegion && !enableVMSS) {
   name: 'webVM${i + 1}'
   params: {
     vmName: '${projectName}-${environment}-${regionSuffix}-web-vm-${i + 1}'
@@ -497,8 +506,8 @@ module webVMs 'vm.bicep' = [for i in range(0, vmCount): if (!isDRRegion) {
   }
 }]
 
-// App Tier VMs
-module appVMs 'vm.bicep' = [for i in range(0, vmCount): if (!isDRRegion) {
+// App Tier VMs (only deployed when VMSS is disabled)
+module appVMs 'vm.bicep' = [for i in range(0, vmCount): if (!isDRRegion && !enableVMSS) {
   name: 'appVM${i + 1}'
   params: {
     vmName: '${projectName}-${environment}-${regionSuffix}-app-vm-${i + 1}'
@@ -516,7 +525,7 @@ module appVMs 'vm.bicep' = [for i in range(0, vmCount): if (!isDRRegion) {
   }
 }]
 
-// Data Tier VMs
+// Data Tier VMs (always deployed as individual VMs for database persistence)
 module dataVMs 'vm.bicep' = [for i in range(0, vmCount): if (!isDRRegion) {
   name: 'dataVM${i + 1}'
   params: {
@@ -536,6 +545,35 @@ module dataVMs 'vm.bicep' = [for i in range(0, vmCount): if (!isDRRegion) {
   }
 }]
 
+// VMSS Module (when enabled)
+module vmssDeployment 'vmss.bicep' = if (enableVMSS) {
+  name: 'vmssDeployment'
+  params: {
+    projectName: projectName
+    environment: environment
+    location: location
+    regionSuffix: regionSuffix
+    isDRRegion: isDRRegion
+    enableVMSS: enableVMSS
+    enableAutoScaling: enableAutoScaling
+    webSubnetId: webSubnet.id
+    appSubnetId: appSubnet.id
+    webLoadBalancerBackendPoolId: '${loadBalancer.id}/backendAddressPools/BackEndAddressPool'
+    appLoadBalancerBackendPoolId: '${internalLoadBalancer.id}/backendAddressPools/InternalBackEndAddressPool'
+    vmAdminUsername: vmAdminUsername
+    vmAdminPassword: vmAdminPassword
+    vmSizeWeb: vmSizeWeb
+    vmSizeApp: vmSizeApp
+    useAvailabilityZones: useAvailabilityZones
+    autoScalingConfig: autoScalingConfig
+    tags: tags
+  }
+  dependsOn: [
+    loadBalancer
+    internalLoadBalancer
+  ]
+}
+
 // Outputs
 output resourceGroupName string = resourceGroup().name
 output vnetName string = vnet.name
@@ -550,22 +588,22 @@ output webSubnetId string = webSubnet.id
 output appSubnetId string = appSubnet.id
 output dataSubnetId string = dataSubnet.id
 
-output webVmNames array = !isDRRegion ? [for i in range(0, vmCount): webVMs[i].outputs.vmName] : []
-output appVmNames array = !isDRRegion ? [for i in range(0, vmCount): appVMs[i].outputs.vmName] : []
+output webVmNames array = (!isDRRegion && !enableVMSS) ? [for i in range(0, vmCount): webVMs[i].outputs.vmName] : []
+output appVmNames array = (!isDRRegion && !enableVMSS) ? [for i in range(0, vmCount): appVMs[i].outputs.vmName] : []
 output dataVmNames array = !isDRRegion ? [for i in range(0, vmCount): dataVMs[i].outputs.vmName] : []
 
-output webVmIds array = !isDRRegion ? [for i in range(0, vmCount): webVMs[i].outputs.vmId] : []
-output appVmIds array = !isDRRegion ? [for i in range(0, vmCount): appVMs[i].outputs.vmId] : []
+output webVmIds array = (!isDRRegion && !enableVMSS) ? [for i in range(0, vmCount): webVMs[i].outputs.vmId] : []
+output appVmIds array = (!isDRRegion && !enableVMSS) ? [for i in range(0, vmCount): appVMs[i].outputs.vmId] : []
 output dataVmIds array = !isDRRegion ? [for i in range(0, vmCount): dataVMs[i].outputs.vmId] : []
 
 // VM Network Interface IDs for Site Recovery
-output webVmNicIds array = !isDRRegion ? [for i in range(0, vmCount): webVMs[i].outputs.nicId] : []
-output appVmNicIds array = !isDRRegion ? [for i in range(0, vmCount): appVMs[i].outputs.nicId] : []
+output webVmNicIds array = (!isDRRegion && !enableVMSS) ? [for i in range(0, vmCount): webVMs[i].outputs.nicId] : []
+output appVmNicIds array = (!isDRRegion && !enableVMSS) ? [for i in range(0, vmCount): appVMs[i].outputs.nicId] : []
 output dataVmNicIds array = !isDRRegion ? [for i in range(0, vmCount): dataVMs[i].outputs.nicId] : []
 
 // VM OS Disk IDs for Site Recovery
-output webVmOsDiskIds array = !isDRRegion ? [for i in range(0, vmCount): webVMs[i].outputs.osDiskId] : []
-output appVmOsDiskIds array = !isDRRegion ? [for i in range(0, vmCount): appVMs[i].outputs.osDiskId] : []
+output webVmOsDiskIds array = (!isDRRegion && !enableVMSS) ? [for i in range(0, vmCount): webVMs[i].outputs.osDiskId] : []
+output appVmOsDiskIds array = (!isDRRegion && !enableVMSS) ? [for i in range(0, vmCount): appVMs[i].outputs.osDiskId] : []
 output dataVmOsDiskIds array = !isDRRegion ? [for i in range(0, vmCount): dataVMs[i].outputs.osDiskId] : []
 
 // VM Data Disk IDs for Site Recovery
@@ -576,13 +614,29 @@ output webAvailabilitySetId string = !useAvailabilityZones && !isDRRegion ? webA
 output appAvailabilitySetId string = !useAvailabilityZones && !isDRRegion ? appAvailabilitySet.id : ''
 output dataAvailabilitySetId string = !useAvailabilityZones && !isDRRegion ? dataAvailabilitySet.id : ''
 
+// VMSS Outputs
+output webVMSSName string = enableVMSS ? vmssDeployment.outputs.webVMSSName : ''
+output appVMSSName string = enableVMSS ? vmssDeployment.outputs.appVMSSName : ''
+output webVMSSId string = enableVMSS ? vmssDeployment.outputs.webVMSSId : ''
+output appVMSSId string = enableVMSS ? vmssDeployment.outputs.appVMSSId : ''
+
+output webAutoScaleSettingId string = enableVMSS && enableAutoScaling ? vmssDeployment.outputs.webAutoScaleSettingId : ''
+output appAutoScaleSettingId string = enableVMSS && enableAutoScaling ? vmssDeployment.outputs.appAutoScaleSettingId : ''
+
+output vmssDeploymentSummary object = enableVMSS ? vmssDeployment.outputs.vmssDeploymentSummary : {}
+
 output regionSummary object = {
   location: location
   regionSuffix: regionSuffix
   isDRRegion: isDRRegion
   useAvailabilityZones: useAvailabilityZones
-  webVmCount: !isDRRegion ? vmCount : 0
-  appVmCount: !isDRRegion ? vmCount : 0
+  enableVMSS: enableVMSS
+  enableAutoScaling: enableAutoScaling
+  webVmCount: (!isDRRegion && !enableVMSS) ? vmCount : 0
+  appVmCount: (!isDRRegion && !enableVMSS) ? vmCount : 0
   dataVmCount: !isDRRegion ? vmCount : 0
-  totalVmCount: !isDRRegion ? vmCount * 3 : 0
+  webVMSSEnabled: enableVMSS && !isDRRegion
+  appVMSSEnabled: enableVMSS && !isDRRegion
+  autoScalingEnabled: enableVMSS && enableAutoScaling && !isDRRegion
+  totalVmCount: !isDRRegion ? (enableVMSS ? vmCount : vmCount * 3) : 0
 }
