@@ -41,33 +41,33 @@ Update your `main.bicepparam` file:
 
 ```bicep
 // VMSS Configuration
-param enableVMSS = true          // Enable Virtual Machine Scale Sets
-param enableAutoScaling = true   // Enable auto-scaling rules
+param enableVMSS = true // Enable Virtual Machine Scale Sets
+param enableAutoScaling = true // Enable auto-scaling rules
 
 // Auto-scaling Configuration
 param autoScalingConfig = {
-  webTier: {
-    minInstances: 2
-    maxInstances: 10
-    defaultInstances: 3
-    scaleOutCpuThreshold: 75    // Scale out when CPU > 75%
-    scaleInCpuThreshold: 25     // Scale in when CPU < 25%
-    scaleOutMemoryThreshold: 80 // Scale out when memory usage > 80%
-    scaleInMemoryThreshold: 30  // Scale in when memory usage < 30%
-    scaleOutCooldown: 'PT5M'    // 5 minutes
-    scaleInCooldown: 'PT10M'    // 10 minutes
-  }
-  appTier: {
-    minInstances: 2
-    maxInstances: 8
-    defaultInstances: 2
-    scaleOutCpuThreshold: 70    // Scale out when CPU > 70%
-    scaleInCpuThreshold: 30     // Scale in when CPU < 30%
-    scaleOutMemoryThreshold: 75 // Scale out when memory usage > 75%
-    scaleInMemoryThreshold: 35  // Scale in when memory usage < 35%
-    scaleOutCooldown: 'PT5M'    // 5 minutes
-    scaleInCooldown: 'PT15M'    // 15 minutes
-  }
+webTier: {
+minInstances: 2
+maxInstances: 10
+defaultInstances: 3
+scaleOutCpuThreshold: 75 // Scale out when CPU > 75%
+scaleInCpuThreshold: 25 // Scale in when CPU < 25%
+scaleOutMemoryThreshold: 80 // Scale out when memory usage > 80%
+scaleInMemoryThreshold: 30 // Scale in when memory usage < 30%
+scaleOutCooldown: 'PT5M' // 5 minutes
+scaleInCooldown: 'PT10M' // 10 minutes
+}
+appTier: {
+minInstances: 2
+maxInstances: 8
+defaultInstances: 2
+scaleOutCpuThreshold: 70 // Scale out when CPU > 70%
+scaleInCpuThreshold: 30 // Scale in when CPU < 30%
+scaleOutMemoryThreshold: 75 // Scale out when memory usage > 75%
+scaleInMemoryThreshold: 35 // Scale in when memory usage < 35%
+scaleOutCooldown: 'PT5M' // 5 minutes
+scaleInCooldown: 'PT15M' // 15 minutes
+}
 }
 ```
 
@@ -100,27 +100,27 @@ param enableAutoScaling = true
 #### Web Tier
 ```yaml
 Scale-out triggers:
-  - CPU > 75% for 5 minutes
-  - Action: Add 1 instance
-  - Cooldown: 5 minutes
+- CPU > 75% for 5 minutes
+- Action: Add 1 instance
+- Cooldown: 5 minutes
 
 Scale-in triggers:
-  - CPU < 25% for 10 minutes
-  - Action: Remove 1 instance
-  - Cooldown: 10 minutes
+- CPU < 25% for 10 minutes
+- Action: Remove 1 instance
+- Cooldown: 10 minutes
 ```
 
 #### App Tier
 ```yaml
 Scale-out triggers:
-  - CPU > 70% for 5 minutes
-  - Action: Add 1 instance
-  - Cooldown: 5 minutes
+- CPU > 70% for 5 minutes
+- Action: Add 1 instance
+- Cooldown: 5 minutes
 
 Scale-in triggers:
-  - CPU < 30% for 15 minutes
-  - Action: Remove 1 instance
-  - Cooldown: 15 minutes
+- CPU < 30% for 15 minutes
+- Action: Remove 1 instance
+- Cooldown: 15 minutes
 ```
 
 ### Memory-based Scaling
@@ -128,32 +128,32 @@ Scale-in triggers:
 #### Web Tier
 ```yaml
 Scale-out triggers:
-  - Available memory < 1GB for 5 minutes
-  - Action: Add 1 instance
+- Available memory < 1GB for 5 minutes
+- Action: Add 1 instance
 
 Scale-in triggers:
-  - Available memory > 2GB for 10 minutes
-  - Action: Remove 1 instance
+- Available memory > 2GB for 10 minutes
+- Action: Remove 1 instance
 ```
 
 #### App Tier
 ```yaml
 Scale-out triggers:
-  - Available memory < 768MB for 5 minutes
-  - Action: Add 1 instance
+- Available memory < 768MB for 5 minutes
+- Action: Add 1 instance
 
 Scale-in triggers:
-  - Available memory > 2.5GB for 15 minutes
-  - Action: Remove 1 instance
+- Available memory > 2.5GB for 15 minutes
+- Action: Remove 1 instance
 ```
 
 ### Network Traffic Scaling (App Tier Only)
 
 ```yaml
 Scale-out triggers:
-  - Network In > 50MB for 5 minutes
-  - Action: Add 1 instance
-  - Cooldown: 5 minutes
+- Network In > 50MB for 5 minutes
+- Action: Add 1 instance
+- Cooldown: 5 minutes
 ```
 
 ### Time-based Scaling Profiles
@@ -179,18 +179,18 @@ The implementation includes automatic health monitoring:
 #### Web Tier Health Check
 ```bicep
 settings: {
-  protocol: 'http'
-  port: 80
-  requestPath: '/'
+protocol: 'http'
+port: 80
+requestPath: '/'
 }
 ```
 
 #### App Tier Health Check
 ```bicep
 settings: {
-  protocol: 'http'
-  port: 80
-  requestPath: '/health'
+protocol: 'http'
+port: 80
+requestPath: '/health'
 }
 ```
 
@@ -214,10 +214,10 @@ cd bicep-implementation/
 
 # 3. Deploy to Azure
 az deployment sub create \
-  --location "East US" \
-  --template-file main.bicep \
-  --parameters main.bicepparam \
-  --parameters vmAdminPassword='YourSecurePassword123!'
+--location "East US" \
+--template-file main.bicep \
+--parameters main.bicepparam \
+--parameters vmAdminPassword='YourSecurePassword123!'
 ```
 
 ### Option 2: Deploy Individual VMs (Traditional)
@@ -228,10 +228,10 @@ az deployment sub create \
 
 # 2. Deploy to Azure
 az deployment sub create \
-  --location "East US" \
-  --template-file main.bicep \
-  --parameters main.bicepparam \
-  --parameters vmAdminPassword='YourSecurePassword123!'
+--location "East US" \
+--template-file main.bicep \
+--parameters main.bicepparam \
+--parameters vmAdminPassword='YourSecurePassword123!'
 ```
 
 ### Expected Deployment Time
@@ -283,15 +283,15 @@ The implementation provides extensive monitoring:
 
 ```bicep
 notifications: [
-  {
-    operation: 'Scale'
-    email: {
-      sendToSubscriptionAdministrator: false
-      sendToSubscriptionCoAdministrators: false
-      customEmails: []
-    }
-    webhooks: []
-  }
+{
+operation: 'Scale'
+email: {
+sendToSubscriptionAdministrator: false
+sendToSubscriptionCoAdministrators: false
+customEmails: []
+}
+webhooks: []
+}
 ]
 ```
 
@@ -335,20 +335,20 @@ notifications: [
 
 #### Conservative Scale-in
 ```bicep
-scaleInCooldown: 'PT15M'  // Longer cooldowns prevent flapping
-scaleInCpuThreshold: 25   // Lower threshold for conservative scale-in
+scaleInCooldown: 'PT15M' // Longer cooldowns prevent flapping
+scaleInCpuThreshold: 25 // Lower threshold for conservative scale-in
 ```
 
 #### Aggressive Scale-out
 ```bicep
-scaleOutCooldown: 'PT5M'  // Quick response to load increases
-scaleOutCpuThreshold: 75  // Reasonable threshold for scale-out
+scaleOutCooldown: 'PT5M' // Quick response to load increases
+scaleOutCpuThreshold: 75 // Reasonable threshold for scale-out
 ```
 
 #### Memory Thresholds
 ```bicep
-scaleOutMemoryThreshold: 80  // Scale out before memory exhaustion
-scaleInMemoryThreshold: 30   // Conservative scale-in based on memory
+scaleOutMemoryThreshold: 80 // Scale out before memory exhaustion
+scaleInMemoryThreshold: 30 // Conservative scale-in based on memory
 ```
 
 ### Deployment Best Practices
@@ -371,16 +371,16 @@ scaleInMemoryThreshold: 30   // Conservative scale-in based on memory
 ```bash
 # Retrieve SSH private key (sensitive operation)
 az deployment sub show \
-  --name primaryRegionDeployment \
-  --query 'properties.outputs.vmssDeploymentSummary.value' \
-  --output json
+--name primaryRegionDeployment \
+--query 'properties.outputs.vmssDeploymentSummary.value' \
+--output json
 ```
 
 #### Password Management
 ```bash
 # Use Azure Key Vault for password storage
 az deployment sub create \
-  --parameters vmAdminPassword='@Microsoft.KeyVault(SecretUri=https://vault.vault.azure.net/secrets/vm-password/version)'
+--parameters vmAdminPassword='@Microsoft.KeyVault(SecretUri=https://vault.vault.azure.net/secrets/vm-password/version)'
 ```
 
 ## Troubleshooting
@@ -502,10 +502,10 @@ param enableAutoScaling = true
 ```bash
 # Deploy updated template
 az deployment sub create \
-  --location "East US" \
-  --template-file main.bicep \
-  --parameters main.bicepparam \
-  --parameters vmAdminPassword='YourSecurePassword123!'
+--location "East US" \
+--template-file main.bicep \
+--parameters main.bicepparam \
+--parameters vmAdminPassword='YourSecurePassword123!'
 ```
 
 #### Step 4: Validate Migration
@@ -540,18 +540,18 @@ You can extend auto-scaling with custom application metrics:
 ```bicep
 // Example custom metric rule
 {
-  metricTrigger: {
-    metricName: 'Custom/DatabaseConnections'
-    metricNamespace: 'Application'
-    operator: 'GreaterThan'
-    threshold: 80
-  }
-  scaleAction: {
-    direction: 'Increase'
-    type: 'ChangeCount'
-    value: '1'
-    cooldown: 'PT5M'
-  }
+metricTrigger: {
+metricName: 'Custom/DatabaseConnections'
+metricNamespace: 'Application'
+operator: 'GreaterThan'
+threshold: 80
+}
+scaleAction: {
+direction: 'Increase'
+type: 'ChangeCount'
+value: '1'
+cooldown: 'PT5M'
+}
 }
 ```
 
@@ -576,4 +576,4 @@ The implementation supports multi-region deployments:
 
 ---
 
-**Ready for production deployment with enterprise-grade auto-scaling! 🚀**
+**Ready for production deployment with enterprise-grade auto-scaling! **

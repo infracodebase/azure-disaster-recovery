@@ -20,47 +20,47 @@ param tags object
 
 // Traffic Manager Profile
 resource trafficManagerProfile 'Microsoft.Network/trafficManagerProfiles@2022-04-01' = {
-  name: '${projectName}-${environment}-tm'
-  location: 'global'
-  tags: tags
-  properties: {
-    profileStatus: 'Enabled'
-    trafficRoutingMethod: 'Priority'
-    dnsConfig: {
-      relativeName: '${projectName}-${environment}'
-      ttl: 60
-    }
-    monitorConfig: {
-      protocol: 'HTTPS'
-      port: 443
-      path: '/health'
-      intervalInSeconds: 30
-      timeoutInSeconds: 10
-      toleratedNumberOfFailures: 3
-    }
-    endpoints: [
-      {
-        name: '${projectName}-${environment}-primary'
-        type: 'Microsoft.Network/trafficManagerProfiles/azureEndpoints'
-        properties: {
-          targetResourceId: primaryEndpointResourceId
-          priority: 1
-          weight: 100
-          endpointStatus: 'Enabled'
-        }
-      }
-      {
-        name: '${projectName}-${environment}-secondary'
-        type: 'Microsoft.Network/trafficManagerProfiles/azureEndpoints'
-        properties: {
-          targetResourceId: secondaryEndpointResourceId
-          priority: 2
-          weight: 100
-          endpointStatus: 'Enabled'
-        }
-      }
-    ]
-  }
+name: '${projectName}-${environment}-tm'
+location: 'global'
+tags: tags
+properties: {
+profileStatus: 'Enabled'
+trafficRoutingMethod: 'Priority'
+dnsConfig: {
+relativeName: '${projectName}-${environment}'
+ttl: 60
+}
+monitorConfig: {
+protocol: 'HTTPS'
+port: 443
+path: '/health'
+intervalInSeconds: 30
+timeoutInSeconds: 10
+toleratedNumberOfFailures: 3
+}
+endpoints: [
+{
+name: '${projectName}-${environment}-primary'
+type: 'Microsoft.Network/trafficManagerProfiles/azureEndpoints'
+properties: {
+targetResourceId: primaryEndpointResourceId
+priority: 1
+weight: 100
+endpointStatus: 'Enabled'
+}
+}
+{
+name: '${projectName}-${environment}-secondary'
+type: 'Microsoft.Network/trafficManagerProfiles/azureEndpoints'
+properties: {
+targetResourceId: secondaryEndpointResourceId
+priority: 2
+weight: 100
+endpointStatus: 'Enabled'
+}
+}
+]
+}
 }
 
 // Outputs

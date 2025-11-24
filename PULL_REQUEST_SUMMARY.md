@@ -50,67 +50,67 @@ This PR implements comprehensive Azure Virtual Machine Scale Sets (VMSS) in Bice
 ### VMSS Auto-Scaling Configuration
 ```bicep
 resource webVMSS 'Microsoft.Compute/virtualMachineScaleSets@2023-09-01' = if (enableVMSS && !isDRRegion) {
-  name: '${projectName}-${environment}-${regionSuffix}-web-vmss'
-  sku: {
-    name: vmSizeWeb
-    capacity: autoScalingConfig.webTier.defaultInstances
-  }
-  properties: {
-    orchestrationMode: 'Flexible'
-    virtualMachineProfile: {
-      networkProfile: {
-        networkInterfaceConfigurations: [{
-          properties: {
-            loadBalancerBackendAddressPools: [{
-              id: webLoadBalancerBackendPoolId
-            }]
-          }
-        }]
-      }
-    }
-  }
+name: '${projectName}-${environment}-${regionSuffix}-web-vmss'
+sku: {
+name: vmSizeWeb
+capacity: autoScalingConfig.webTier.defaultInstances
+}
+properties: {
+orchestrationMode: 'Flexible'
+virtualMachineProfile: {
+networkProfile: {
+networkInterfaceConfigurations: [{
+properties: {
+loadBalancerBackendAddressPools: [{
+id: webLoadBalancerBackendPoolId
+}]
+}
+}]
+}
+}
+}
 }
 ```
 
 ### Infrastructure Auto-Detection
 ```powershell
 function Detect-InfrastructureType {
-    param([Parameter(Mandatory = $true)][string]$ResourceGroupName)
+param([Parameter(Mandatory = $true)][string]$ResourceGroupName)
 
-    $resources = Get-AzResource -ResourceGroupName $ResourceGroupName | Select-Object -First 10
-    $terraformIndicators = 0
-    $bicepIndicators = 0
+$resources = Get-AzResource -ResourceGroupName $ResourceGroupName | Select-Object -First 10
+$terraformIndicators = 0
+$bicepIndicators = 0
 
-    foreach ($resource in $resources) {
-        $name = $resource.Name.ToLower()
-        # Terraform patterns: hyphen-separated, shorter names
-        if ($name -match '^[a-z]+-[a-z]+-[0-9]+' -or $name -match '^[a-z]+-lb') {
-            $terraformIndicators++
-        }
-        # Bicep patterns: project-environment-region-resource format
-        if ($name -match '^[a-z]+-[a-z]+-[a-z0-9]+-[a-z]+-[a-z0-9-]+') {
-            $bicepIndicators++
-        }
-    }
+foreach ($resource in $resources) {
+$name = $resource.Name.ToLower()
+# Terraform patterns: hyphen-separated, shorter names
+if ($name -match '^[a-z]+-[a-z]+-[0-9]+' -or $name -match '^[a-z]+-lb') {
+$terraformIndicators++
+}
+# Bicep patterns: project-environment-region-resource format
+if ($name -match '^[a-z]+-[a-z]+-[a-z0-9]+-[a-z]+-[a-z0-9-]+') {
+$bicepIndicators++
+}
+}
 
-    return if ($bicepIndicators > $terraformIndicators) { "bicep" } else { "terraform" }
+return if ($bicepIndicators > $terraformIndicators) { "bicep" } else { "terraform" }
 }
 ```
 
 ## Testing and Validation
 
 ### VMSS Implementation
-- ✅ Faithful representation of Terraform VMSS functionality
-- ✅ Auto-scaling rules with multiple metric types
-- ✅ Time-based scaling profiles
-- ✅ Cross-availability zone deployment
-- ✅ Load balancer backend pool integration
+- DONE Faithful representation of Terraform VMSS functionality
+- DONE Auto-scaling rules with multiple metric types
+- DONE Time-based scaling profiles
+- DONE Cross-availability zone deployment
+- DONE Load balancer backend pool integration
 
 ### PowerShell Automation
-- ✅ Works with both Terraform and Bicep naming conventions
-- ✅ Auto-detects infrastructure type
-- ✅ Handles cross-region resource mapping
-- ✅ Comprehensive networking configuration backup/restore
+- DONE Works with both Terraform and Bicep naming conventions
+- DONE Auto-detects infrastructure type
+- DONE Handles cross-region resource mapping
+- DONE Comprehensive networking configuration backup/restore
 
 ## Deployment Instructions
 
@@ -118,10 +118,10 @@ function Detect-InfrastructureType {
 ```bash
 # Deploy VMSS with auto-scaling
 az deployment group create \
-  --resource-group myResourceGroup \
-  --template-file bicep-implementation/main.bicep \
-  --parameters @bicep-implementation/parameters/prod.parameters.json \
-  --parameters enableVMSS=true
+--resource-group myResourceGroup \
+--template-file bicep-implementation/main.bicep \
+--parameters @bicep-implementation/parameters/prod.parameters.json \
+--parameters enableVMSS=true
 ```
 
 ### For PowerShell Automation

@@ -46,104 +46,104 @@ param dataDiskId string?
 
 // Network Interface
 resource networkInterface 'Microsoft.Network/networkInterfaces@2023-09-01' = {
-  name: '${vmName}-nic'
-  location: location
-  tags: tags
-  properties: {
-    ipConfigurations: [
-      {
-        name: 'internal'
-        properties: {
-          privateIPAllocationMethod: 'Dynamic'
-          subnet: {
-            id: subnetId
-          }
-          loadBalancerBackendAddressPools: loadBalancerBackendPoolId != null ? [
-            {
-              id: loadBalancerBackendPoolId
-            }
-          ] : []
-        }
-      }
-    ]
-  }
+name: '${vmName}-nic'
+location: location
+tags: tags
+properties: {
+ipConfigurations: [
+{
+name: 'internal'
+properties: {
+privateIPAllocationMethod: 'Dynamic'
+subnet: {
+id: subnetId
+}
+loadBalancerBackendAddressPools: loadBalancerBackendPoolId != null ? [
+{
+id: loadBalancerBackendPoolId
+}
+] : []
+}
+}
+]
+}
 }
 
 // Virtual Machine
 resource virtualMachine 'Microsoft.Compute/virtualMachines@2024-03-01' = {
-  name: vmName
-  location: location
-  tags: tags
-  zones: availabilityZone != null ? [availabilityZone] : []
-  properties: {
-    availabilitySet: availabilitySetId != null ? {
-      id: availabilitySetId
-    } : null
-    hardwareProfile: {
-      vmSize: vmSize
-    }
-    osProfile: {
-      computerName: vmName
-      adminUsername: adminUsername
-      adminPassword: adminPassword
-      customData: customData
-      linuxConfiguration: {
-        disablePasswordAuthentication: false
-        provisionVMAgent: true
-        patchSettings: {
-          patchMode: 'ImageDefault'
-          assessmentMode: 'ImageDefault'
-        }
-      }
-    }
-    storageProfile: {
-      imageReference: {
-        publisher: 'Canonical'
-        offer: '0001-com-ubuntu-server-focal'
-        sku: '20_04-lts-gen2'
-        version: 'latest'
-      }
-      osDisk: {
-        name: '${vmName}-os-disk'
-        caching: 'ReadWrite'
-        createOption: 'FromImage'
-        managedDisk: {
-          storageAccountType: 'Premium_LRS'
-        }
-        deleteOption: 'Delete'
-      }
-      dataDisks: tier == 'data' && dataDiskId != null ? [
-        {
-          name: '${vmName}-data-disk'
-          lun: 0
-          createOption: 'Attach'
-          managedDisk: {
-            id: dataDiskId
-          }
-          caching: 'ReadWrite'
-          deleteOption: 'Delete'
-        }
-      ] : []
-    }
-    networkProfile: {
-      networkInterfaces: [
-        {
-          id: networkInterface.id
-          properties: {
-            deleteOption: 'Delete'
-          }
-        }
-      ]
-    }
-    diagnosticsProfile: {
-      bootDiagnostics: {
-        enabled: true
-      }
-    }
-    securityProfile: {
-      securityType: 'Standard'
-    }
-  }
+name: vmName
+location: location
+tags: tags
+zones: availabilityZone != null ? [availabilityZone] : []
+properties: {
+availabilitySet: availabilitySetId != null ? {
+id: availabilitySetId
+} : null
+hardwareProfile: {
+vmSize: vmSize
+}
+osProfile: {
+computerName: vmName
+adminUsername: adminUsername
+adminPassword: adminPassword
+customData: customData
+linuxConfiguration: {
+disablePasswordAuthentication: false
+provisionVMAgent: true
+patchSettings: {
+patchMode: 'ImageDefault'
+assessmentMode: 'ImageDefault'
+}
+}
+}
+storageProfile: {
+imageReference: {
+publisher: 'Canonical'
+offer: '0001-com-ubuntu-server-focal'
+sku: '20_04-lts-gen2'
+version: 'latest'
+}
+osDisk: {
+name: '${vmName}-os-disk'
+caching: 'ReadWrite'
+createOption: 'FromImage'
+managedDisk: {
+storageAccountType: 'Premium_LRS'
+}
+deleteOption: 'Delete'
+}
+dataDisks: tier == 'data' && dataDiskId != null ? [
+{
+name: '${vmName}-data-disk'
+lun: 0
+createOption: 'Attach'
+managedDisk: {
+id: dataDiskId
+}
+caching: 'ReadWrite'
+deleteOption: 'Delete'
+}
+] : []
+}
+networkProfile: {
+networkInterfaces: [
+{
+id: networkInterface.id
+properties: {
+deleteOption: 'Delete'
+}
+}
+]
+}
+diagnosticsProfile: {
+bootDiagnostics: {
+enabled: true
+}
+}
+securityProfile: {
+securityType: 'Standard'
+}
+}
 }
 
 // Outputs

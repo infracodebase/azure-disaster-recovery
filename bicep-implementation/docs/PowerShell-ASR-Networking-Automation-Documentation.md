@@ -1,6 +1,6 @@
 # Azure Site Recovery Networking Automation - PowerShell Documentation
 
-## 📋 Table of Contents
+## Table of Contents
 
 1. [Overview](#overview)
 2. [Prerequisites](#prerequisites)
@@ -17,7 +17,7 @@
 
 ---
 
-## 📖 Overview
+## Overview
 
 The Azure Site Recovery (ASR) Networking Automation PowerShell suite provides comprehensive automation for preserving and restoring VM networking configurations during disaster recovery scenarios. This solution ensures that after ASR failover, VMs maintain their exact networking configurations including Application Security Groups (ASG), static IP addresses, Load Balancer backend pools, and Application Gateway backend pools.
 
@@ -31,7 +31,7 @@ The Azure Site Recovery (ASR) Networking Automation PowerShell suite provides co
 
 ---
 
-## ⚡ Prerequisites
+## Prerequisites
 
 ### Required Azure PowerShell Modules
 
@@ -63,7 +63,7 @@ The executing account must have the following Azure RBAC permissions:
 
 ---
 
-## 📂 Scripts Overview
+## Scripts Overview
 
 ### Core Scripts
 
@@ -84,7 +84,7 @@ The executing account must have the following Azure RBAC permissions:
 
 ---
 
-## 🚀 Installation & Setup
+## Installation & Setup
 
 ### 1. Download Scripts
 
@@ -108,11 +108,11 @@ $resourceGroupName = "shared-services-rg"
 $location = "East US"
 
 $storageAccount = New-AzStorageAccount `
-    -ResourceGroupName $resourceGroupName `
-    -Name $storageAccountName `
-    -Location $location `
-    -SkuName "Standard_LRS" `
-    -Kind "StorageV2"
+-ResourceGroupName $resourceGroupName `
+-Name $storageAccountName `
+-Location $location `
+-SkuName "Standard_LRS" `
+-Kind "StorageV2"
 
 # Create container for configurations
 $ctx = $storageAccount.Context
@@ -128,7 +128,7 @@ Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope LocalMachine
 
 ---
 
-## 📚 Script Reference
+## Script Reference
 
 ## Save-NetworkingConfig.ps1
 
@@ -139,16 +139,16 @@ Captures and saves VM networking configurations before Site Recovery failover.
 
 ```powershell
 .\Save-NetworkingConfig.ps1
-    [-ResourceGroupName] <String>
-    [-ConfigurationPath <String>]
-    [-StorageAccountName <String>]
-    [-StorageResourceGroupName <String>]
-    [-VmNames <String[]>]
-    [-SubscriptionId <String>]
-    [-IncludeAppGateway]
-    [-IncludeLoadBalancer]
-    [-Detailed]
-    [<CommonParameters>]
+[-ResourceGroupName] <String>
+[-ConfigurationPath <String>]
+[-StorageAccountName <String>]
+[-StorageResourceGroupName <String>]
+[-VmNames <String[]>]
+[-SubscriptionId <String>]
+[-IncludeAppGateway]
+[-IncludeLoadBalancer]
+[-Detailed]
+[<CommonParameters>]
 ```
 
 ### Parameters
@@ -173,18 +173,18 @@ Captures and saves VM networking configurations before Site Recovery failover.
 
 # Backup specific VMs with storage account persistence
 .\Save-NetworkingConfig.ps1 `
-    -ResourceGroupName "webapp-prod-primary-rg" `
-    -VmNames @("web-vm-1", "web-vm-2", "app-vm-1") `
-    -StorageAccountName "asrnetworkingconfigs" `
-    -StorageResourceGroupName "shared-services-rg" `
-    -IncludeAppGateway `
-    -IncludeLoadBalancer
+-ResourceGroupName "webapp-prod-primary-rg" `
+-VmNames @("web-vm-1", "web-vm-2", "app-vm-1") `
+-StorageAccountName "asrnetworkingconfigs" `
+-StorageResourceGroupName "shared-services-rg" `
+-IncludeAppGateway `
+-IncludeLoadBalancer
 
 # Backup with detailed logging to custom path
 .\Save-NetworkingConfig.ps1 `
-    -ResourceGroupName "webapp-prod-primary-rg" `
-    -ConfigurationPath "D:\ASR\Backups" `
-    -Detailed
+-ResourceGroupName "webapp-prod-primary-rg" `
+-ConfigurationPath "D:\ASR\Backups" `
+-Detailed
 ```
 
 ---
@@ -198,15 +198,15 @@ Compares current networking configurations with saved state and restores missing
 
 ```powershell
 .\Restore-NetworkingConfig.ps1
-    [-ResourceGroupName] <String>
-    [-ConfigurationPath <String>]
-    [-MasterConfigFile <String>]
-    [-VmNames <String[]>]
-    [-SubscriptionId <String>]
-    [-DryRun]
-    [-Force]
-    [-Detailed]
-    [<CommonParameters>]
+[-ResourceGroupName] <String>
+[-ConfigurationPath <String>]
+[-MasterConfigFile <String>]
+[-VmNames <String[]>]
+[-SubscriptionId <String>]
+[-DryRun]
+[-Force]
+[-Detailed]
+[<CommonParameters>]
 ```
 
 ### Parameters
@@ -230,21 +230,21 @@ Compares current networking configurations with saved state and restores missing
 
 # Dry-run to preview changes
 .\Restore-NetworkingConfig.ps1 `
-    -ResourceGroupName "webapp-prod-secondary-rg" `
-    -ConfigurationPath "C:\ASR\Configs" `
-    -DryRun `
-    -Detailed
+-ResourceGroupName "webapp-prod-secondary-rg" `
+-ConfigurationPath "C:\ASR\Configs" `
+-DryRun `
+-Detailed
 
 # Force restoration without prompts for specific VMs
 .\Restore-NetworkingConfig.ps1 `
-    -ResourceGroupName "webapp-prod-secondary-rg" `
-    -VmNames @("web-vm-1", "web-vm-2") `
-    -Force
+-ResourceGroupName "webapp-prod-secondary-rg" `
+-VmNames @("web-vm-1", "web-vm-2") `
+-Force
 
 # Restore from specific configuration file
 .\Restore-NetworkingConfig.ps1 `
-    -ResourceGroupName "webapp-prod-secondary-rg" `
-    -MasterConfigFile "C:\ASR\Configs\MASTER-networking-config-20241201-143022.json"
+-ResourceGroupName "webapp-prod-secondary-rg" `
+-MasterConfigFile "C:\ASR\Configs\MASTER-networking-config-20241201-143022.json"
 ```
 
 ---
@@ -258,13 +258,13 @@ Azure Automation runbook for integrated ASR networking configuration management.
 
 ```powershell
 .\ASR-NetworkingAutomation.ps1
-    [-Operation] <String>
-    [-ResourceGroupName] <String>
-    [-StorageAccountName] <String>
-    [-StorageResourceGroupName] <String>
-    [-VmNames <String[]>]
-    [-DryRun]
-    [<CommonParameters>]
+[-Operation] <String>
+[-ResourceGroupName] <String>
+[-StorageAccountName] <String>
+[-StorageResourceGroupName] <String>
+[-VmNames <String[]>]
+[-DryRun]
+[<CommonParameters>]
 ```
 
 ### Parameters
@@ -283,22 +283,22 @@ Azure Automation runbook for integrated ASR networking configuration management.
 ```powershell
 # Backup operation in Azure Automation
 .\ASR-NetworkingAutomation.ps1 `
-    -Operation "Backup" `
-    -ResourceGroupName "webapp-prod-primary-rg" `
-    -StorageAccountName "asrnetworkingconfigs" `
-    -StorageResourceGroupName "shared-services-rg"
+-Operation "Backup" `
+-ResourceGroupName "webapp-prod-primary-rg" `
+-StorageAccountName "asrnetworkingconfigs" `
+-StorageResourceGroupName "shared-services-rg"
 
 # Restore operation in Azure Automation
 .\ASR-NetworkingAutomation.ps1 `
-    -Operation "Restore" `
-    -ResourceGroupName "webapp-prod-secondary-rg" `
-    -StorageAccountName "asrnetworkingconfigs" `
-    -StorageResourceGroupName "shared-services-rg"
+-Operation "Restore" `
+-ResourceGroupName "webapp-prod-secondary-rg" `
+-StorageAccountName "asrnetworkingconfigs" `
+-StorageResourceGroupName "shared-services-rg"
 ```
 
 ---
 
-## 🎯 Usage Examples
+## TARGET Usage Examples
 
 ### Scenario 1: Manual Pre-Failover Backup
 
@@ -309,12 +309,12 @@ Set-AzContext -SubscriptionId "your-subscription-id"
 
 # Step 2: Backup all VM networking configurations
 .\Save-NetworkingConfig.ps1 `
-    -ResourceGroupName "webapp-prod-eastus-rg" `
-    -StorageAccountName "drnetworkconfigs" `
-    -StorageResourceGroupName "shared-services-rg" `
-    -IncludeAppGateway `
-    -IncludeLoadBalancer `
-    -Detailed
+-ResourceGroupName "webapp-prod-eastus-rg" `
+-StorageAccountName "drnetworkconfigs" `
+-StorageResourceGroupName "shared-services-rg" `
+-IncludeAppGateway `
+-IncludeLoadBalancer `
+-Detailed
 
 # Output: Configuration files saved to storage account
 # - MASTER-networking-config-20241201-143022.json
@@ -337,16 +337,16 @@ New-Item -Path $configPath -ItemType Directory -Force
 
 # Step 3: Preview restoration changes
 .\Restore-NetworkingConfig.ps1 `
-    -ResourceGroupName "webapp-prod-westus2-rg" `
-    -ConfigurationPath $configPath `
-    -DryRun `
-    -Detailed
+-ResourceGroupName "webapp-prod-westus2-rg" `
+-ConfigurationPath $configPath `
+-DryRun `
+-Detailed
 
 # Step 4: Apply configurations after review
 .\Restore-NetworkingConfig.ps1 `
-    -ResourceGroupName "webapp-prod-westus2-rg" `
-    -ConfigurationPath $configPath `
-    -Force
+-ResourceGroupName "webapp-prod-westus2-rg" `
+-ConfigurationPath $configPath `
+-Force
 ```
 
 ### Scenario 3: Selective VM Restoration
@@ -354,41 +354,41 @@ New-Item -Path $configPath -ItemType Directory -Force
 ```powershell
 # Restore only critical web tier VMs
 .\Restore-NetworkingConfig.ps1 `
-    -ResourceGroupName "webapp-prod-secondary-rg" `
-    -VmNames @("web-vm-1", "web-vm-2", "web-vm-3") `
-    -Force `
-    -Detailed
+-ResourceGroupName "webapp-prod-secondary-rg" `
+-VmNames @("web-vm-1", "web-vm-2", "web-vm-3") `
+-Force `
+-Detailed
 
 # Verify specific VM configurations
 .\Restore-NetworkingConfig.ps1 `
-    -ResourceGroupName "webapp-prod-secondary-rg" `
-    -VmNames @("app-vm-1") `
-    -DryRun
+-ResourceGroupName "webapp-prod-secondary-rg" `
+-VmNames @("app-vm-1") `
+-DryRun
 ```
 
 ---
 
-## 🔧 Configuration Management
+## Configuration Management
 
 ### Master Configuration File Structure
 
 ```json
 {
-  "Timestamp": "2024-12-01T14:30:22Z",
-  "SourceSubscription": "subscription-guid",
-  "PrimaryResourceGroup": "webapp-prod-eastus-rg",
-  "SecondaryResourceGroup": "webapp-prod-westus2-rg",
-  "ConfigurationFiles": [
-    "web-vm-1-networking-config-20241201-143022.json",
-    "web-vm-2-networking-config-20241201-143022.json",
-    "app-vm-1-networking-config-20241201-143022.json"
-  ],
-  "Statistics": {
-    "TotalVMs": 3,
-    "TotalNICs": 6,
-    "TotalASGs": 4,
-    "TotalStaticIPs": 2
-  }
+"Timestamp": "2024-12-01T14:30:22Z",
+"SourceSubscription": "subscription-guid",
+"PrimaryResourceGroup": "webapp-prod-eastus-rg",
+"SecondaryResourceGroup": "webapp-prod-westus2-rg",
+"ConfigurationFiles": [
+"web-vm-1-networking-config-20241201-143022.json",
+"web-vm-2-networking-config-20241201-143022.json",
+"app-vm-1-networking-config-20241201-143022.json"
+],
+"Statistics": {
+"TotalVMs": 3,
+"TotalNICs": 6,
+"TotalASGs": 4,
+"TotalStaticIPs": 2
+}
 }
 ```
 
@@ -396,62 +396,62 @@ New-Item -Path $configPath -ItemType Directory -Force
 
 ```json
 {
-  "VmName": "web-vm-1",
-  "VmId": "/subscriptions/{sub}/resourceGroups/{rg}/providers/Microsoft.Compute/virtualMachines/web-vm-1",
-  "Timestamp": "2024-12-01T14:30:22Z",
-  "NetworkInterfaces": [
-    {
-      "Name": "web-vm-1-nic",
-      "ResourceGroup": "webapp-prod-eastus-rg",
-      "ApplicationSecurityGroups": [
-        {
-          "IpConfigurationName": "ipconfig1",
-          "AsgName": "web-tier-asg",
-          "AsgId": "/subscriptions/{sub}/resourceGroups/{rg}/providers/Microsoft.Network/applicationSecurityGroups/web-tier-asg",
-          "AsgResourceGroup": "webapp-prod-eastus-rg"
-        }
-      ],
-      "StaticIpConfigurations": [
-        {
-          "IpConfigurationName": "ipconfig1",
-          "StaticPrivateIpAddress": "10.1.1.10",
-          "StaticPublicIpAddress": null
-        }
-      ],
-      "LoadBalancerBackendPools": [
-        {
-          "IpConfigurationName": "ipconfig1",
-          "LoadBalancerName": "web-lb-primary",
-          "LoadBalancerResourceGroup": "webapp-prod-eastus-rg",
-          "BackendPoolName": "web-backend-pool"
-        }
-      ],
-      "ApplicationGatewayBackendPools": [
-        {
-          "IpConfigurationName": "ipconfig1",
-          "ApplicationGatewayName": "web-appgw-primary",
-          "ApplicationGatewayResourceGroup": "webapp-prod-eastus-rg",
-          "BackendPoolName": "web-backend-pool"
-        }
-      ]
-    }
-  ]
+"VmName": "web-vm-1",
+"VmId": "/subscriptions/{sub}/resourceGroups/{rg}/providers/Microsoft.Compute/virtualMachines/web-vm-1",
+"Timestamp": "2024-12-01T14:30:22Z",
+"NetworkInterfaces": [
+{
+"Name": "web-vm-1-nic",
+"ResourceGroup": "webapp-prod-eastus-rg",
+"ApplicationSecurityGroups": [
+{
+"IpConfigurationName": "ipconfig1",
+"AsgName": "web-tier-asg",
+"AsgId": "/subscriptions/{sub}/resourceGroups/{rg}/providers/Microsoft.Network/applicationSecurityGroups/web-tier-asg",
+"AsgResourceGroup": "webapp-prod-eastus-rg"
+}
+],
+"StaticIpConfigurations": [
+{
+"IpConfigurationName": "ipconfig1",
+"StaticPrivateIpAddress": "10.1.1.10",
+"StaticPublicIpAddress": null
+}
+],
+"LoadBalancerBackendPools": [
+{
+"IpConfigurationName": "ipconfig1",
+"LoadBalancerName": "web-lb-primary",
+"LoadBalancerResourceGroup": "webapp-prod-eastus-rg",
+"BackendPoolName": "web-backend-pool"
+}
+],
+"ApplicationGatewayBackendPools": [
+{
+"IpConfigurationName": "ipconfig1",
+"ApplicationGatewayName": "web-appgw-primary",
+"ApplicationGatewayResourceGroup": "webapp-prod-eastus-rg",
+"BackendPoolName": "web-backend-pool"
+}
+]
+}
+]
 }
 ```
 
 ---
 
-## 🤖 Azure Automation Integration
+## Azure Automation Integration
 
 ### 1. Create Automation Account
 
 ```powershell
 # Create Azure Automation Account
 $automationAccount = New-AzAutomationAccount `
-    -ResourceGroupName "shared-services-rg" `
-    -Name "asr-networking-automation" `
-    -Location "East US" `
-    -Plan "Free"
+-ResourceGroupName "shared-services-rg" `
+-Name "asr-networking-automation" `
+-Location "East US" `
+-Plan "Free"
 ```
 
 ### 2. Import Required Modules
@@ -461,10 +461,10 @@ $automationAccount = New-AzAutomationAccount `
 $modules = @("Az.Accounts", "Az.Network", "Az.Compute", "Az.Resources", "Az.Storage")
 
 foreach ($module in $modules) {
-    Import-AzAutomationModule `
-        -AutomationAccountName "asr-networking-automation" `
-        -ResourceGroupName "shared-services-rg" `
-        -Name $module
+Import-AzAutomationModule `
+-AutomationAccountName "asr-networking-automation" `
+-ResourceGroupName "shared-services-rg" `
+-Name $module
 }
 ```
 
@@ -474,10 +474,10 @@ foreach ($module in $modules) {
 # Create credential for service principal
 $credential = Get-Credential -Message "Enter Service Principal credentials"
 New-AzAutomationCredential `
-    -AutomationAccountName "asr-networking-automation" `
-    -ResourceGroupName "shared-services-rg" `
-    -Name "ASR-ServicePrincipal" `
-    -Value $credential
+-AutomationAccountName "asr-networking-automation" `
+-ResourceGroupName "shared-services-rg" `
+-Name "ASR-ServicePrincipal" `
+-Value $credential
 ```
 
 ### 4. Create Runbooks
@@ -485,17 +485,17 @@ New-AzAutomationCredential `
 ```powershell
 # Import networking automation runbook
 Import-AzAutomationRunbook `
-    -AutomationAccountName "asr-networking-automation" `
-    -ResourceGroupName "shared-services-rg" `
-    -Path "C:\Scripts\ASR-NetworkingAutomation.ps1" `
-    -Type "PowerShell" `
-    -Name "ASR-NetworkingAutomation"
+-AutomationAccountName "asr-networking-automation" `
+-ResourceGroupName "shared-services-rg" `
+-Path "C:\Scripts\ASR-NetworkingAutomation.ps1" `
+-Type "PowerShell" `
+-Name "ASR-NetworkingAutomation"
 
 # Publish runbook
 Publish-AzAutomationRunbook `
-    -AutomationAccountName "asr-networking-automation" `
-    -ResourceGroupName "shared-services-rg" `
-    -Name "ASR-NetworkingAutomation"
+-AutomationAccountName "asr-networking-automation" `
+-ResourceGroupName "shared-services-rg" `
+-Name "ASR-NetworkingAutomation"
 ```
 
 ### 5. ASR Recovery Plan Integration
@@ -503,32 +503,32 @@ Publish-AzAutomationRunbook `
 ```powershell
 # Add pre-failover script to ASR Recovery Plan
 $preScript = @{
-    ScriptName = "ASR-NetworkingAutomation"
-    FabricLocation = "Primary"
-    Parameters = @{
-        Operation = "Backup"
-        ResourceGroupName = "webapp-prod-eastus-rg"
-        StorageAccountName = "asrnetworkingconfigs"
-        StorageResourceGroupName = "shared-services-rg"
-    }
+ScriptName = "ASR-NetworkingAutomation"
+FabricLocation = "Primary"
+Parameters = @{
+Operation = "Backup"
+ResourceGroupName = "webapp-prod-eastus-rg"
+StorageAccountName = "asrnetworkingconfigs"
+StorageResourceGroupName = "shared-services-rg"
+}
 }
 
 # Add post-failover script to ASR Recovery Plan
 $postScript = @{
-    ScriptName = "ASR-NetworkingAutomation"
-    FabricLocation = "Secondary"
-    Parameters = @{
-        Operation = "Restore"
-        ResourceGroupName = "webapp-prod-westus2-rg"
-        StorageAccountName = "asrnetworkingconfigs"
-        StorageResourceGroupName = "shared-services-rg"
-    }
+ScriptName = "ASR-NetworkingAutomation"
+FabricLocation = "Secondary"
+Parameters = @{
+Operation = "Restore"
+ResourceGroupName = "webapp-prod-westus2-rg"
+StorageAccountName = "asrnetworkingconfigs"
+StorageResourceGroupName = "shared-services-rg"
+}
 }
 ```
 
 ---
 
-## 🔍 Troubleshooting
+## Troubleshooting
 
 ### Common Issues and Solutions
 
@@ -575,10 +575,10 @@ Get-AzStorageBlob -Container "networking-configs" -Context $ctx
 
 # Download configurations from storage
 Get-AzStorageBlobContent `
-    -Container "networking-configs" `
-    -Blob "MASTER-networking-config-20241201-143022.json" `
-    -Destination "C:\ASR\Configs\" `
-    -Context $ctx
+-Container "networking-configs" `
+-Blob "MASTER-networking-config-20241201-143022.json" `
+-Destination "C:\ASR\Configs\" `
+-Context $ctx
 ```
 
 #### Issue 3: Resource Not Found Errors
@@ -601,9 +601,9 @@ Get-AzLoadBalancer -ResourceGroupName "webapp-prod-westus2-rg" -Name $secondaryL
 
 # Manual resource creation if needed
 New-AzApplicationSecurityGroup `
-    -ResourceGroupName "webapp-prod-westus2-rg" `
-    -Name "web-tier-asg" `
-    -Location "West US 2"
+-ResourceGroupName "webapp-prod-westus2-rg" `
+-Name "web-tier-asg" `
+-Location "West US 2"
 ```
 
 #### Issue 4: PowerShell Module Issues
@@ -638,10 +638,10 @@ $DebugPreference = "Continue"
 
 # Run script with detailed logging
 .\Restore-NetworkingConfig.ps1 `
-    -ResourceGroupName "webapp-prod-secondary-rg" `
-    -Detailed `
-    -DryRun `
-    -Verbose
+-ResourceGroupName "webapp-prod-secondary-rg" `
+-Detailed `
+-DryRun `
+-Verbose
 ```
 
 ### Log Analysis
@@ -661,7 +661,7 @@ $backupLog | Export-Csv "backup-errors.csv" -NoTypeInformation
 
 ---
 
-## 🛡️ Best Practices
+## Best Practices
 
 ### 1. Configuration Management
 
@@ -685,15 +685,15 @@ $servicePrincipal = New-AzADServicePrincipal -DisplayName "ASR-Networking-Automa
 
 # Assign minimal required permissions
 New-AzRoleAssignment `
-    -ObjectId $servicePrincipal.Id `
-    -RoleDefinitionName "Network Contributor" `
-    -ResourceGroupName "webapp-prod-eastus-rg"
+-ObjectId $servicePrincipal.Id `
+-RoleDefinitionName "Network Contributor" `
+-ResourceGroupName "webapp-prod-eastus-rg"
 
 # Store credentials securely in Key Vault
 Set-AzKeyVaultSecret `
-    -VaultName "asr-secrets-kv" `
-    -Name "ASR-SP-Password" `
-    -SecretValue $servicePrincipal.Secret
+-VaultName "asr-secrets-kv" `
+-Name "ASR-SP-Password" `
+-SecretValue $servicePrincipal.Secret
 ```
 
 ### 3. Monitoring and Alerting
@@ -701,9 +701,9 @@ Set-AzKeyVaultSecret `
 ```powershell
 # Create custom metrics for monitoring
 $customMetric = @{
-    MetricName = "ASR-NetworkingRestore-Success"
-    Value = 1
-    TimeStamp = (Get-Date).ToUniversalTime()
+MetricName = "ASR-NetworkingRestore-Success"
+Value = 1
+TimeStamp = (Get-Date).ToUniversalTime()
 }
 
 # Send metrics to Azure Monitor
@@ -711,9 +711,9 @@ Send-AzMetric @customMetric
 
 # Create alerts for failures
 New-AzMetricAlertRule `
-    -Name "ASR-NetworkingRestore-Failed" `
-    -ResourceGroupName "monitoring-rg" `
-    -Condition "ASR-NetworkingRestore-Success < 1"
+-Name "ASR-NetworkingRestore-Failed" `
+-ResourceGroupName "monitoring-rg" `
+-Condition "ASR-NetworkingRestore-Success < 1"
 ```
 
 ### 4. Backup and Recovery
@@ -721,23 +721,23 @@ New-AzMetricAlertRule `
 ```powershell
 # Regular configuration backups
 $scheduleJob = Register-ScheduledJob -Name "ASR-Network-Backup" -ScriptBlock {
-    .\Save-NetworkingConfig.ps1 `
-        -ResourceGroupName "webapp-prod-eastus-rg" `
-        -StorageAccountName "asrnetworkconfigs" `
-        -StorageResourceGroupName "shared-services-rg"
+.\Save-NetworkingConfig.ps1 `
+-ResourceGroupName "webapp-prod-eastus-rg" `
+-StorageAccountName "asrnetworkconfigs" `
+-StorageResourceGroupName "shared-services-rg"
 } -Trigger (New-JobTrigger -Daily -At "2:00 AM")
 
 # Retention policy for old configurations
 $retentionDays = 30
 $cutoffDate = (Get-Date).AddDays(-$retentionDays)
 Get-AzStorageBlob -Container "networking-configs" -Context $storageContext |
-    Where-Object { $_.LastModified -lt $cutoffDate } |
-    Remove-AzStorageBlob
+Where-Object { $_.LastModified -lt $cutoffDate } |
+Remove-AzStorageBlob
 ```
 
 ---
 
-## 🔐 Security Considerations
+## Security Considerations
 
 ### Authentication and Authorization
 
@@ -750,7 +750,7 @@ $sp = New-AzADServicePrincipal -DisplayName "ASR-Networking-SP" -Role "Contribut
 # Limit permissions to specific resource groups
 $resourceGroups = @("webapp-prod-eastus-rg", "webapp-prod-westus2-rg", "shared-services-rg")
 foreach ($rg in $resourceGroups) {
-    New-AzRoleAssignment -ObjectId $sp.Id -RoleDefinitionName "Network Contributor" -ResourceGroupName $rg
+New-AzRoleAssignment -ObjectId $sp.Id -RoleDefinitionName "Network Contributor" -ResourceGroupName $rg
 }
 ```
 
@@ -786,16 +786,16 @@ $configData = [Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.Intero
 ```powershell
 # Enable storage account encryption
 $storageAccount = Set-AzStorageAccount `
-    -ResourceGroupName "shared-services-rg" `
-    -Name "asrnetworkconfigs" `
-    -EnableHttpsTrafficOnly $true `
-    -MinimumTlsVersion "TLS1_2"
+-ResourceGroupName "shared-services-rg" `
+-Name "asrnetworkconfigs" `
+-EnableHttpsTrafficOnly $true `
+-MinimumTlsVersion "TLS1_2"
 
 # Configure network access rules
 Add-AzStorageAccountNetworkRule `
-    -ResourceGroupName "shared-services-rg" `
-    -Name "asrnetworkconfigs" `
-    -VirtualNetworkResourceId "/subscriptions/{sub}/resourceGroups/{rg}/providers/Microsoft.Network/virtualNetworks/{vnet}/subnets/{subnet}"
+-ResourceGroupName "shared-services-rg" `
+-Name "asrnetworkconfigs" `
+-VirtualNetworkResourceId "/subscriptions/{sub}/resourceGroups/{rg}/providers/Microsoft.Network/virtualNetworks/{vnet}/subnets/{subnet}"
 ```
 
 ### Audit and Compliance
@@ -805,46 +805,46 @@ Add-AzStorageAccountNetworkRule `
 ```powershell
 # Enable diagnostic settings for Automation Account
 $diagnosticSettings = @{
-    Name = "ASR-Automation-Diagnostics"
-    ResourceId = (Get-AzAutomationAccount -ResourceGroupName "shared-services-rg" -Name "asr-networking-automation").ResourceId
-    WorkspaceId = (Get-AzOperationalInsightsWorkspace -ResourceGroupName "monitoring-rg" -Name "central-logs").ResourceId
-    Log = @(
-        @{ Category = "JobLogs"; Enabled = $true }
-        @{ Category = "JobStreams"; Enabled = $true }
-        @{ Category = "DscNodeStatus"; Enabled = $true }
-    )
+Name = "ASR-Automation-Diagnostics"
+ResourceId = (Get-AzAutomationAccount -ResourceGroupName "shared-services-rg" -Name "asr-networking-automation").ResourceId
+WorkspaceId = (Get-AzOperationalInsightsWorkspace -ResourceGroupName "monitoring-rg" -Name "central-logs").ResourceId
+Log = @(
+@{ Category = "JobLogs"; Enabled = $true }
+@{ Category = "JobStreams"; Enabled = $true }
+@{ Category = "DscNodeStatus"; Enabled = $true }
+)
 }
 Set-AzDiagnosticSetting @diagnosticSettings
 ```
 
 ---
 
-## 📊 Monitoring & Logging
+## Monitoring & Logging
 
 ### Log Analytics Integration
 
 ```powershell
 # Create custom log table for ASR networking events
 $customLogSchema = @{
-    TableName = "ASRNetworkingEvents_CL"
-    Schema = @(
-        @{ Name = "Timestamp"; Type = "datetime" }
-        @{ Name = "Operation"; Type = "string" }
-        @{ Name = "VmName"; Type = "string" }
-        @{ Name = "ResourceGroup"; Type = "string" }
-        @{ Name = "Status"; Type = "string" }
-        @{ Name = "Details"; Type = "string" }
-    )
+TableName = "ASRNetworkingEvents_CL"
+Schema = @(
+@{ Name = "Timestamp"; Type = "datetime" }
+@{ Name = "Operation"; Type = "string" }
+@{ Name = "VmName"; Type = "string" }
+@{ Name = "ResourceGroup"; Type = "string" }
+@{ Name = "Status"; Type = "string" }
+@{ Name = "Details"; Type = "string" }
+)
 }
 
 # Send custom events to Log Analytics
 $logData = @{
-    Timestamp = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
-    Operation = "NetworkingRestore"
-    VmName = "web-vm-1"
-    ResourceGroup = "webapp-prod-westus2-rg"
-    Status = "Success"
-    Details = "Successfully restored 3 ASG memberships and 1 static IP"
+Timestamp = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
+Operation = "NetworkingRestore"
+VmName = "web-vm-1"
+ResourceGroup = "webapp-prod-westus2-rg"
+Status = "Success"
+Details = "Successfully restored 3 ASG memberships and 1 static IP"
 }
 
 Send-AzOperationalInsightsDataCollector -WorkspaceId $workspaceId -SharedKey $sharedKey -Body ($logData | ConvertTo-Json) -LogType "ASRNetworkingEvents"
@@ -864,11 +864,11 @@ Write-Host "Script execution time: $($stopwatch.Elapsed)"
 
 # Log performance metrics
 $performanceData = @{
-    ScriptName = "Restore-NetworkingConfig"
-    ExecutionTimeMs = $stopwatch.ElapsedMilliseconds
-    VmCount = 5
-    ConfigurationsRestored = 15
-    Timestamp = Get-Date
+ScriptName = "Restore-NetworkingConfig"
+ExecutionTimeMs = $stopwatch.ElapsedMilliseconds
+VmCount = 5
+ConfigurationsRestored = 15
+Timestamp = Get-Date
 }
 $performanceData | Export-Csv "script-performance.csv" -Append -NoTypeInformation
 ```
@@ -887,20 +887,20 @@ ASRNetworkingEvents_CL
 ```powershell
 # Create alert rule for networking restoration failures
 $alertRule = @{
-    Name = "ASR-NetworkingRestore-Failures"
-    ResourceGroupName = "monitoring-rg"
-    TargetResourceId = (Get-AzOperationalInsightsWorkspace -ResourceGroupName "monitoring-rg" -Name "central-logs").ResourceId
-    Query = "ASRNetworkingEvents_CL | where Status == 'Failed' | where TimeGenerated > ago(5m)"
-    TimeAggregationOperator = "GreaterThan"
-    Threshold = 0
-    ActionGroupId = (Get-AzActionGroup -ResourceGroupName "monitoring-rg" -Name "critical-alerts").Id
+Name = "ASR-NetworkingRestore-Failures"
+ResourceGroupName = "monitoring-rg"
+TargetResourceId = (Get-AzOperationalInsightsWorkspace -ResourceGroupName "monitoring-rg" -Name "central-logs").ResourceId
+Query = "ASRNetworkingEvents_CL | where Status == 'Failed' | where TimeGenerated > ago(5m)"
+TimeAggregationOperator = "GreaterThan"
+Threshold = 0
+ActionGroupId = (Get-AzActionGroup -ResourceGroupName "monitoring-rg" -Name "critical-alerts").Id
 }
 New-AzScheduledQueryRule @alertRule
 ```
 
 ---
 
-## 📞 Support and Troubleshooting
+## Support and Troubleshooting
 
 ### Contact Information
 
@@ -928,7 +928,7 @@ To contribute improvements to the scripts or documentation:
 
 ---
 
-## 📋 Appendix
+## Appendix
 
 ### Quick Reference Commands
 
@@ -952,11 +952,11 @@ Get-ChildItem -Filter "*networking-config*.json"
 ### Common File Locations
 
 ```
-C:\ASR\Scripts\                     # Script files
-C:\ASR\Configs\                     # Configuration files
-C:\ASR\Logs\                        # Log files
-D:\ASR\Backups\                     # Backup configurations
-Azure Storage: networking-configs/  # Cloud storage
+C:\ASR\Scripts\ # Script files
+C:\ASR\Configs\ # Configuration files
+C:\ASR\Logs\ # Log files
+D:\ASR\Backups\ # Backup configurations
+Azure Storage: networking-configs/ # Cloud storage
 ```
 
 ### Version History

@@ -41,37 +41,37 @@ The VMSS implementation provides:
 Set the following variables in your `terraform.tfvars`:
 
 ```hcl
-enable_vmss             = true
+enable_vmss = true
 vmss_orchestration_mode = "Flexible"
-enable_auto_scaling     = true
+enable_auto_scaling = true
 ```
 
 ### Auto-scaling Configuration
 
 ```hcl
 auto_scaling_config = {
-  web_tier = {
-    min_instances               = 2      # Minimum instances
-    max_instances               = 10     # Maximum instances
-    default_instances           = 3      # Default/starting instances
-    scale_out_cpu_threshold     = 75     # Scale out when CPU > 75%
-    scale_in_cpu_threshold      = 25     # Scale in when CPU < 25%
-    scale_out_memory_threshold  = 80     # Scale out when memory > 80%
-    scale_in_memory_threshold   = 30     # Scale in when memory < 30%
-    scale_out_cooldown          = "PT5M" # 5 minute cooldown for scale-out
-    scale_in_cooldown           = "PT10M"# 10 minute cooldown for scale-in
-  }
-  app_tier = {
-    min_instances               = 2
-    max_instances               = 8
-    default_instances           = 2
-    scale_out_cpu_threshold     = 70
-    scale_in_cpu_threshold      = 30
-    scale_out_memory_threshold  = 75
-    scale_in_memory_threshold   = 35
-    scale_out_cooldown          = "PT5M"
-    scale_in_cooldown           = "PT15M"
-  }
+web_tier = {
+min_instances = 2 # Minimum instances
+max_instances = 10 # Maximum instances
+default_instances = 3 # Default/starting instances
+scale_out_cpu_threshold = 75 # Scale out when CPU > 75%
+scale_in_cpu_threshold = 25 # Scale in when CPU < 25%
+scale_out_memory_threshold = 80 # Scale out when memory > 80%
+scale_in_memory_threshold = 30 # Scale in when memory < 30%
+scale_out_cooldown = "PT5M" # 5 minute cooldown for scale-out
+scale_in_cooldown = "PT10M"# 10 minute cooldown for scale-in
+}
+app_tier = {
+min_instances = 2
+max_instances = 8
+default_instances = 2
+scale_out_cpu_threshold = 70
+scale_in_cpu_threshold = 30
+scale_out_memory_threshold = 75
+scale_in_memory_threshold = 35
+scale_out_cooldown = "PT5M"
+scale_in_cooldown = "PT15M"
+}
 }
 ```
 
@@ -106,37 +106,37 @@ auto_scaling_config = {
 
 ```yaml
 Scale-out triggers:
-  - CPU > threshold for 5 minutes
-  - Action: Add 1 instance
-  - Cooldown: 5 minutes
+- CPU > threshold for 5 minutes
+- Action: Add 1 instance
+- Cooldown: 5 minutes
 
 Scale-in triggers:
-  - CPU < threshold for 5-15 minutes (tier dependent)
-  - Action: Remove 1 instance
-  - Cooldown: 10-15 minutes (longer to prevent flapping)
+- CPU < threshold for 5-15 minutes (tier dependent)
+- Action: Remove 1 instance
+- Cooldown: 10-15 minutes (longer to prevent flapping)
 ```
 
 ### Memory-based Scaling
 
 ```yaml
 Scale-out triggers:
-  - Available memory < 1GB (Web) / 768MB (App)
-  - Evaluation: 5 minutes
-  - Action: Add 1 instance
+- Available memory < 1GB (Web) / 768MB (App)
+- Evaluation: 5 minutes
+- Action: Add 1 instance
 
 Scale-in triggers:
-  - Available memory > 2GB (Web) / 2.5GB (App)
-  - Evaluation: 10-15 minutes
-  - Action: Remove 1 instance
+- Available memory > 2GB (Web) / 2.5GB (App)
+- Evaluation: 10-15 minutes
+- Action: Remove 1 instance
 ```
 
 ### Network Traffic Scaling (App Tier)
 
 ```yaml
 Scale-out triggers:
-  - Network In > 50MB for 5 minutes
-  - Action: Add 1 instance
-  - Cooldown: 5 minutes
+- Network In > 50MB for 5 minutes
+- Action: Add 1 instance
+- Cooldown: 5 minutes
 ```
 
 ## Health Monitoring
@@ -146,18 +146,18 @@ Scale-out triggers:
 **Web Tier:**
 ```json
 {
-  "protocol": "http",
-  "port": 80,
-  "requestPath": "/"
+"protocol": "http",
+"port": 80,
+"requestPath": "/"
 }
 ```
 
 **App Tier:**
 ```json
 {
-  "protocol": "http",
-  "port": 80,
-  "requestPath": "/health"
+"protocol": "http",
+"port": 80,
+"requestPath": "/health"
 }
 ```
 
@@ -199,20 +199,20 @@ terraform apply
 ### Key Metrics to Monitor
 
 1. **Auto-scaling Events**
-   - Scale-out/Scale-in frequency
-   - Scaling triggers and reasons
-   - Instance count over time
+- Scale-out/Scale-in frequency
+- Scaling triggers and reasons
+- Instance count over time
 
 2. **Performance Metrics**
-   - CPU utilization per instance
-   - Memory usage per instance
-   - Network throughput
-   - Application response times
+- CPU utilization per instance
+- Memory usage per instance
+- Network throughput
+- Application response times
 
 3. **Health Metrics**
-   - Healthy instance count
-   - Failed health checks
-   - Instance replacement rate
+- Healthy instance count
+- Failed health checks
+- Instance replacement rate
 
 ### Azure Monitor Integration
 
@@ -249,19 +249,19 @@ The implementation includes:
 ### Common Issues
 
 1. **Scaling Not Triggering**
-   - Check metric thresholds
-   - Verify cooldown periods
-   - Review Azure Monitor logs
+- Check metric thresholds
+- Verify cooldown periods
+- Review Azure Monitor logs
 
 2. **Too Aggressive Scaling**
-   - Increase thresholds
-   - Extend cooldown periods
-   - Add time-based profiles
+- Increase thresholds
+- Extend cooldown periods
+- Add time-based profiles
 
 3. **Health Check Failures**
-   - Verify application endpoints
-   - Check NSG rules
-   - Review application logs
+- Verify application endpoints
+- Check NSG rules
+- Review application logs
 
 ### Useful Commands
 
@@ -303,37 +303,37 @@ az vmss scale --resource-group <rg-name> --name <vmss-name> --new-capacity 5
 ### From Individual VMs to VMSS
 
 1. **Backup Current State**
-   ```bash
-   terraform plan -out=current.tfplan
-   ```
+```bash
+terraform plan -out=current.tfplan
+```
 
 2. **Update Configuration**
-   ```bash
-   # Set in terraform.tfvars
-   enable_vmss = true
-   enable_auto_scaling = true
-   ```
+```bash
+# Set in terraform.tfvars
+enable_vmss = true
+enable_auto_scaling = true
+```
 
 3. **Plan Migration**
-   ```bash
-   terraform plan
-   # Review the changes - VMs will be destroyed and VMSS created
-   ```
+```bash
+terraform plan
+# Review the changes - VMs will be destroyed and VMSS created
+```
 
 4. **Execute Migration**
-   ```bash
-   terraform apply
-   # Confirm the migration
-   ```
+```bash
+terraform apply
+# Confirm the migration
+```
 
 5. **Verify Deployment**
-   ```bash
-   # Check VMSS status
-   az vmss show --resource-group <rg> --name <vmss-name>
+```bash
+# Check VMSS status
+az vmss show --resource-group <rg> --name <vmss-name>
 
-   # Test auto-scaling
-   az monitor autoscale-setting show --resource-group <rg> --name <autoscale-name>
-   ```
+# Test auto-scaling
+az monitor autoscale-setting show --resource-group <rg> --name <autoscale-name>
+```
 
 ## Advanced Configuration
 
@@ -344,22 +344,22 @@ You can extend the auto-scaling rules with custom application metrics:
 ```hcl
 # Example: Database connection pool utilization
 rule {
-  metric_trigger {
-    metric_name        = "ConnectionPoolUtilization"
-    metric_namespace   = "Custom/Application"
-    operator           = "GreaterThan"
-    threshold          = 80
-    time_aggregation   = "Average"
-    time_grain         = "PT1M"
-    time_window        = "PT5M"
-  }
+metric_trigger {
+metric_name = "ConnectionPoolUtilization"
+metric_namespace = "Custom/Application"
+operator = "GreaterThan"
+threshold = 80
+time_aggregation = "Average"
+time_grain = "PT1M"
+time_window = "PT5M"
+}
 
-  scale_action {
-    direction = "Increase"
-    type      = "ChangeCount"
-    value     = "1"
-    cooldown  = "PT5M"
-  }
+scale_action {
+direction = "Increase"
+type = "ChangeCount"
+value = "1"
+cooldown = "PT5M"
+}
 }
 ```
 

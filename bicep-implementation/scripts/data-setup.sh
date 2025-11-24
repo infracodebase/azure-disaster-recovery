@@ -16,12 +16,12 @@ curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
 
 # Secure MySQL installation and configuration
 mysql_secure_installation_script() {
-    mysql -e "UPDATE mysql.user SET Password = PASSWORD('RootPassword123!') WHERE User = 'root'"
-    mysql -e "DELETE FROM mysql.user WHERE User=''"
-    mysql -e "DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1')"
-    mysql -e "DROP DATABASE IF EXISTS test"
-    mysql -e "DELETE FROM mysql.db WHERE Db='test' OR Db='test\\_%'"
-    mysql -e "FLUSH PRIVILEGES"
+mysql -e "UPDATE mysql.user SET Password = PASSWORD('RootPassword123!') WHERE User = 'root'"
+mysql -e "DELETE FROM mysql.user WHERE User=''"
+mysql -e "DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1')"
+mysql -e "DROP DATABASE IF EXISTS test"
+mysql -e "DELETE FROM mysql.db WHERE Db='test' OR Db='test\\_%'"
+mysql -e "FLUSH PRIVILEGES"
 }
 
 # Configure MySQL for multi-tier architecture
@@ -76,31 +76,31 @@ USE webapp;
 
 -- Create sample tables
 CREATE TABLE IF NOT EXISTS users (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(50) NOT NULL UNIQUE,
-    email VARCHAR(100) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+id INT AUTO_INCREMENT PRIMARY KEY,
+username VARCHAR(50) NOT NULL UNIQUE,
+email VARCHAR(100) NOT NULL,
+created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS sessions (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT,
-    session_token VARCHAR(255) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    expires_at TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id),
-    INDEX idx_session_token (session_token),
-    INDEX idx_expires_at (expires_at)
+id INT AUTO_INCREMENT PRIMARY KEY,
+user_id INT,
+session_token VARCHAR(255) NOT NULL,
+created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+expires_at TIMESTAMP,
+FOREIGN KEY (user_id) REFERENCES users(id),
+INDEX idx_session_token (session_token),
+INDEX idx_expires_at (expires_at)
 );
 
 CREATE TABLE IF NOT EXISTS app_metrics (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    metric_name VARCHAR(100) NOT NULL,
-    metric_value DECIMAL(10,2),
-    recorded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    INDEX idx_metric_name (metric_name),
-    INDEX idx_recorded_at (recorded_at)
+id INT AUTO_INCREMENT PRIMARY KEY,
+metric_name VARCHAR(100) NOT NULL,
+metric_value DECIMAL(10,2),
+recorded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+INDEX idx_metric_name (metric_name),
+INDEX idx_recorded_at (recorded_at)
 );
 
 -- Insert sample data
@@ -120,39 +120,39 @@ EOF
 
 # Configure firewall (if enabled)
 if command -v ufw >/dev/null 2>&1; then
-    ufw allow from 10.0.0.0/8 to any port 3306
+ufw allow from 10.0.0.0/8 to any port 3306
 fi
 
 # Set up MySQL data directory on additional disk (if available)
 if [ -e /dev/disk/azure/scsi1/lun0 ]; then
-    # Format and mount additional disk
-    parted /dev/disk/azure/scsi1/lun0 mklabel gpt
-    parted -a opt /dev/disk/azure/scsi1/lun0 mkpart primary ext4 0% 100%
-    mkfs.ext4 /dev/disk/azure/scsi1/lun0-part1
+# Format and mount additional disk
+parted /dev/disk/azure/scsi1/lun0 mklabel gpt
+parted -a opt /dev/disk/azure/scsi1/lun0 mkpart primary ext4 0% 100%
+mkfs.ext4 /dev/disk/azure/scsi1/lun0-part1
 
-    # Create mount point and backup current data
-    mkdir -p /mnt/mysql-data
-    mount /dev/disk/azure/scsi1/lun0-part1 /mnt/mysql-data
+# Create mount point and backup current data
+mkdir -p /mnt/mysql-data
+mount /dev/disk/azure/scsi1/lun0-part1 /mnt/mysql-data
 
-    # Add to fstab for persistent mounting
-    echo "/dev/disk/azure/scsi1/lun0-part1 /mnt/mysql-data ext4 defaults,nofail 0 2" >> /etc/fstab
+# Add to fstab for persistent mounting
+echo "/dev/disk/azure/scsi1/lun0-part1 /mnt/mysql-data ext4 defaults,nofail 0 2" >> /etc/fstab
 
-    # Stop MySQL, copy data, and update configuration
-    systemctl stop mysql
-    cp -R /var/lib/mysql/* /mnt/mysql-data/
-    chown -R mysql:mysql /mnt/mysql-data
+# Stop MySQL, copy data, and update configuration
+systemctl stop mysql
+cp -R /var/lib/mysql/* /mnt/mysql-data/
+chown -R mysql:mysql /mnt/mysql-data
 
-    # Update MySQL data directory
-    sed -i 's|datadir.*|datadir = /mnt/mysql-data|' /etc/mysql/mysql.conf.d/mysqld.cnf
+# Update MySQL data directory
+sed -i 's|datadir.*|datadir = /mnt/mysql-data|' /etc/mysql/mysql.conf.d/mysqld.cnf
 
-    # Update AppArmor profile if present
-    if [ -f /etc/apparmor.d/usr.sbin.mysqld ]; then
-        sed -i '/\/var\/lib\/mysql\//a\ \ /mnt/mysql-data/ r,' /etc/apparmor.d/usr.sbin.mysqld
-        sed -i '/\/var\/lib\/mysql\//a\ \ /mnt/mysql-data/** rwk,' /etc/apparmor.d/usr.sbin.mysqld
-        systemctl reload apparmor
-    fi
+# Update AppArmor profile if present
+if [ -f /etc/apparmor.d/usr.sbin.mysqld ]; then
+sed -i '/\/var\/lib\/mysql\//a\ \ /mnt/mysql-data/ r,' /etc/apparmor.d/usr.sbin.mysqld
+sed -i '/\/var\/lib\/mysql\//a\ \ /mnt/mysql-data/** rwk,' /etc/apparmor.d/usr.sbin.mysqld
+systemctl reload apparmor
+fi
 
-    systemctl start mysql
+systemctl start mysql
 fi
 
 # Set up database backup script
@@ -192,19 +192,19 @@ cat > /usr/local/bin/db-monitor.sh << 'EOF'
 LOG_FILE="/var/log/db-monitor.log"
 
 while true; do
-    # Check if MySQL is running
-    if systemctl is-active --quiet mysql; then
-        # Test database connection
-        if mysql -u monitor -pMonitorPassword123! -e "SELECT 1" > /dev/null 2>&1; then
-            echo "$(date): Database health check passed" >> $LOG_FILE
-        else
-            echo "$(date): Database connection failed" >> $LOG_FILE
-        fi
-    else
-        echo "$(date): MySQL service not running" >> $LOG_FILE
-        systemctl restart mysql
-    fi
-    sleep 60
+# Check if MySQL is running
+if systemctl is-active --quiet mysql; then
+# Test database connection
+if mysql -u monitor -pMonitorPassword123! -e "SELECT 1" > /dev/null 2>&1; then
+echo "$(date): Database health check passed" >> $LOG_FILE
+else
+echo "$(date): Database connection failed" >> $LOG_FILE
+fi
+else
+echo "$(date): MySQL service not running" >> $LOG_FILE
+systemctl restart mysql
+fi
+sleep 60
 done
 EOF
 
@@ -232,23 +232,23 @@ systemctl start db-monitor.service
 # Configure log rotation
 cat > /etc/logrotate.d/mysql-custom << 'EOF'
 /var/log/mysql-backup.log {
-    weekly
-    missingok
-    rotate 12
-    compress
-    delaycompress
-    notifempty
-    create 644 root root
+weekly
+missingok
+rotate 12
+compress
+delaycompress
+notifempty
+create 644 root root
 }
 
 /var/log/db-monitor.log {
-    daily
-    missingok
-    rotate 30
-    compress
-    delaycompress
-    notifempty
-    create 644 root root
+daily
+missingok
+rotate 30
+compress
+delaycompress
+notifempty
+create 644 root root
 }
 EOF
 

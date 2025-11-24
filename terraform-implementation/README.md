@@ -5,45 +5,45 @@ This folder contains the complete Infrastructure as Code (IaC) implementation fo
 
 ---
 
-## 📁 Folder Structure
+## Directory: Folder Structure
 
 ```
 terraform-implementation/
-├── README.md                          # This file
-├── main.tf                           # Main Terraform configuration
-├── variables.tf                      # Input variables and validation
-├── outputs.tf                        # Output values and endpoints
-├── terraform.tfvars.example          # Example variable values
-├── .gitignore                        # Git ignore patterns
-├── modules/                          # Reusable Terraform modules
-│   └── region/                       # Regional deployment module
-│       ├── main.tf                   # Regional infrastructure
-│       ├── variables.tf              # Regional variables
-│       ├── outputs.tf                # Regional outputs
-│       ├── compute.tf                # VM and compute resources
-│       ├── vmss.tf                   # Virtual Machine Scale Sets
-│       ├── autoscaling.tf            # Auto-scaling rules and policies
-│       └── scripts/                  # VM initialization scripts
-│           ├── web-setup.sh          # Web tier configuration
-│           ├── app-setup.sh          # App tier configuration
-│           └── data-setup-enhanced.sh # Database with replication
-└── bicep/                           # Alternative Bicep implementation
-    ├── main.bicep                   # Main Bicep template
-    ├── modules/                     # Bicep modules
-    │   ├── region.bicep             # Regional deployment
-    │   ├── vm.bicep                 # Virtual machine template
-    │   ├── recovery-services.bicep  # Site Recovery configuration
-    │   ├── traffic-manager.bicep    # Global load balancing
-    │   └── vnet-peering.bicep      # Cross-region networking
-    └── scripts/                     # VM initialization scripts
-        ├── web-setup.sh             # Web tier setup
-        ├── app-setup.sh             # App tier setup
-        └── data-setup-enhanced.sh   # Enhanced database setup
+├── README.md # This file
+├── main.tf # Main Terraform configuration
+├── variables.tf # Input variables and validation
+├── outputs.tf # Output values and endpoints
+├── terraform.tfvars.example # Example variable values
+├── .gitignore # Git ignore patterns
+├── modules/ # Reusable Terraform modules
+│ └── region/ # Regional deployment module
+│ ├── main.tf # Regional infrastructure
+│ ├── variables.tf # Regional variables
+│ ├── outputs.tf # Regional outputs
+│ ├── compute.tf # VM and compute resources
+│ ├── vmss.tf # Virtual Machine Scale Sets
+│ ├── autoscaling.tf # Auto-scaling rules and policies
+│ └── scripts/ # VM initialization scripts
+│ ├── web-setup.sh # Web tier configuration
+│ ├── app-setup.sh # App tier configuration
+│ └── data-setup-enhanced.sh # Database with replication
+└── bicep/ # Alternative Bicep implementation
+├── main.bicep # Main Bicep template
+├── modules/ # Bicep modules
+│ ├── region.bicep # Regional deployment
+│ ├── vm.bicep # Virtual machine template
+│ ├── recovery-services.bicep # Site Recovery configuration
+│ ├── traffic-manager.bicep # Global load balancing
+│ └── vnet-peering.bicep # Cross-region networking
+└── scripts/ # VM initialization scripts
+├── web-setup.sh # Web tier setup
+├── app-setup.sh # App tier setup
+└── data-setup-enhanced.sh # Enhanced database setup
 ```
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 ### **Prerequisites**
 - Azure CLI installed and authenticated
@@ -75,14 +75,14 @@ cd bicep/
 
 # 2. Deploy main template
 az deployment sub create \
-  --location "East US" \
-  --template-file main.bicep \
-  --parameters vmAdminPassword='YourSecurePassword123!'
+--location "East US" \
+--template-file main.bicep \
+--parameters vmAdminPassword='YourSecurePassword123!'
 ```
 
 ---
 
-## 🏗️ Architecture Overview
+## Architecture Overview
 
 ### **Infrastructure Components**
 - **Virtual Machine Scale Sets (VMSS)** with auto-scaling (2-10 instances per tier)
@@ -94,16 +94,16 @@ az deployment sub create \
 - **High availability** with Availability Zones
 
 ### **Key Features**
-- ✅ **99.99% SLA** with Availability Zones
-- ✅ **Intelligent Auto-Scaling** with CPU, memory, and network triggers
-- ✅ **Complete DR** with VM replication and database replication
-- ✅ **Security hardening** with NSGs and encryption
-- ✅ **Monitoring** with health checks and diagnostics
-- ✅ **Cost optimization** with dynamic scaling and configurable thresholds
+- DONE **99.99% SLA** with Availability Zones
+- DONE **Intelligent Auto-Scaling** with CPU, memory, and network triggers
+- DONE **Complete DR** with VM replication and database replication
+- DONE **Security hardening** with NSGs and encryption
+- DONE **Monitoring** with health checks and diagnostics
+- DONE **Cost optimization** with dynamic scaling and configurable thresholds
 
 ---
 
-## 🔧 Configuration Options
+## Configuration Options
 
 ### **Environment Variables**
 | Variable | Description | Default |
@@ -118,56 +118,56 @@ az deployment sub create \
 ### **VM Size Configuration**
 ```hcl
 # Configurable VM sizes for cost optimization
-vm_size_web  = "Standard_D2s_v3"  # 2 cores, 8GB RAM
-vm_size_app  = "Standard_D4s_v3"  # 4 cores, 16GB RAM
-vm_size_data = "Standard_D4s_v3"  # 4 cores, 16GB RAM
+vm_size_web = "Standard_D2s_v3" # 2 cores, 8GB RAM
+vm_size_app = "Standard_D4s_v3" # 4 cores, 16GB RAM
+vm_size_data = "Standard_D4s_v3" # 4 cores, 16GB RAM
 ```
 
 ### **Network Configuration**
 ```hcl
 # Primary region network (configurable)
 primary_vnet_address_space = ["10.0.0.0/16"]
-primary_web_subnet_prefix  = "10.0.1.0/24"
-primary_app_subnet_prefix  = "10.0.2.0/24"
+primary_web_subnet_prefix = "10.0.1.0/24"
+primary_app_subnet_prefix = "10.0.2.0/24"
 primary_data_subnet_prefix = "10.0.3.0/24"
 
 # Secondary region network (configurable)
 secondary_vnet_address_space = ["10.1.0.0/16"]
-secondary_web_subnet_prefix  = "10.1.1.0/24"
-secondary_app_subnet_prefix  = "10.1.2.0/24"
+secondary_web_subnet_prefix = "10.1.1.0/24"
+secondary_app_subnet_prefix = "10.1.2.0/24"
 secondary_data_subnet_prefix = "10.1.3.0/24"
 ```
 
 ### **VMSS Auto-Scaling Configuration**
 ```hcl
 # Enable VMSS with auto-scaling
-enable_vmss         = true
+enable_vmss = true
 enable_auto_scaling = true
 
 # Auto-scaling configuration
 auto_scaling_config = {
-  web_tier = {
-    min_instances               = 2
-    max_instances               = 10
-    default_instances           = 3
-    scale_out_cpu_threshold     = 75    # Scale out when CPU > 75%
-    scale_in_cpu_threshold      = 25    # Scale in when CPU < 25%
-    scale_out_memory_threshold  = 80    # Scale out when memory > 80%
-    scale_in_memory_threshold   = 30    # Scale in when memory < 30%
-    scale_out_cooldown          = "PT5M"  # 5 minutes
-    scale_in_cooldown           = "PT10M" # 10 minutes
-  }
-  app_tier = {
-    min_instances               = 2
-    max_instances               = 8
-    default_instances           = 2
-    scale_out_cpu_threshold     = 70
-    scale_in_cpu_threshold      = 30
-    scale_out_memory_threshold  = 75
-    scale_in_memory_threshold   = 35
-    scale_out_cooldown          = "PT5M"
-    scale_in_cooldown           = "PT15M"
-  }
+web_tier = {
+min_instances = 2
+max_instances = 10
+default_instances = 3
+scale_out_cpu_threshold = 75 # Scale out when CPU > 75%
+scale_in_cpu_threshold = 25 # Scale in when CPU < 25%
+scale_out_memory_threshold = 80 # Scale out when memory > 80%
+scale_in_memory_threshold = 30 # Scale in when memory < 30%
+scale_out_cooldown = "PT5M" # 5 minutes
+scale_in_cooldown = "PT10M" # 10 minutes
+}
+app_tier = {
+min_instances = 2
+max_instances = 8
+default_instances = 2
+scale_out_cpu_threshold = 70
+scale_in_cpu_threshold = 30
+scale_out_memory_threshold = 75
+scale_in_memory_threshold = 35
+scale_out_cooldown = "PT5M"
+scale_in_cooldown = "PT15M"
+}
 }
 ```
 
@@ -181,7 +181,7 @@ auto_scaling_config = {
 
 ---
 
-## 🛡️ Security Features
+## Security Features
 
 ### **Network Security**
 - **NSG rules** with principle of least privilege
@@ -202,7 +202,7 @@ auto_scaling_config = {
 
 ---
 
-## 📊 Monitoring & Health Checks
+## Monitoring & Health Checks
 
 ### **Health Monitoring**
 - **Load balancer health probes** for web and app tiers
@@ -218,7 +218,7 @@ auto_scaling_config = {
 
 ---
 
-## 🎯 Disaster Recovery
+## TARGET Disaster Recovery
 
 ### **Recovery Capabilities**
 - **RTO Target**: <4 hours for complete failover
@@ -230,16 +230,16 @@ auto_scaling_config = {
 ```bash
 # Test failover procedure
 az site-recovery protected-item test-failover \
-  --resource-group webapp-prod-primary-rg \
-  --vault-name webapp-prod-rsv \
-  --fabric-name primary-fabric \
-  --protection-container primary-protection-container \
-  --protected-item-name webapp-prod-primary-web-vm-1-replication
+--resource-group webapp-prod-primary-rg \
+--vault-name webapp-prod-rsv \
+--fabric-name primary-fabric \
+--protection-container primary-protection-container \
+--protected-item-name webapp-prod-primary-web-vm-1-replication
 ```
 
 ---
 
-## 🔄 Management Operations
+## Management Operations
 
 ### **Scaling Operations**
 ```bash
@@ -254,26 +254,26 @@ terraform apply -var="vm_size_web=Standard_D1s_v3"
 ```bash
 # Manual backup trigger
 az backup protection backup-now \
-  --resource-group webapp-prod-primary-rg \
-  --vault-name webapp-prod-rsv \
-  --container-name primary-vms \
-  --item-name webapp-prod-primary-web-vm-1
+--resource-group webapp-prod-primary-rg \
+--vault-name webapp-prod-rsv \
+--container-name primary-vms \
+--item-name webapp-prod-primary-web-vm-1
 ```
 
 ### **Monitoring Commands**
 ```bash
 # Check replication health
 az site-recovery protected-item show \
-  --resource-group webapp-prod-primary-rg \
-  --vault-name webapp-prod-rsv \
-  --fabric-name primary-fabric \
-  --protection-container primary-protection-container \
-  --protected-item-name vm-replication
+--resource-group webapp-prod-primary-rg \
+--vault-name webapp-prod-rsv \
+--fabric-name primary-fabric \
+--protection-container primary-protection-container \
+--protected-item-name vm-replication
 ```
 
 ---
 
-## 📈 Deployment Outputs
+## Deployment Outputs
 
 ### **Key Endpoints**
 ```
@@ -292,7 +292,7 @@ Secondary RG: https://portal.azure.com/#@/resource<secondary-rg-id>
 
 ---
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 ### **Common Issues**
 1. **VM Authentication**: Ensure password meets complexity requirements
@@ -310,15 +310,15 @@ az account show
 
 # Test network connectivity
 az vm run-command invoke \
-  --resource-group webapp-prod-primary-rg \
-  --name webapp-prod-primary-web-vm-1 \
-  --command-id RunShellScript \
-  --scripts "ping webapp-prod-primary-app-vm-1"
+--resource-group webapp-prod-primary-rg \
+--name webapp-prod-primary-web-vm-1 \
+--command-id RunShellScript \
+--scripts "ping webapp-prod-primary-app-vm-1"
 ```
 
 ---
 
-## 📚 Additional Resources
+## Additional Resources
 
 - [Azure Well-Architected Framework](https://docs.microsoft.com/en-us/azure/architecture/framework/)
 - [Azure Site Recovery Documentation](https://docs.microsoft.com/en-us/azure/site-recovery/)

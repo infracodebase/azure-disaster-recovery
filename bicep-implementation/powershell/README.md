@@ -1,14 +1,14 @@
 # Azure Site Recovery Networking Automation - PowerShell Suite
 
-## 🚀 Overview
+## Overview
 
 This PowerShell automation suite provides comprehensive networking configuration backup and restoration for Azure Site Recovery (ASR) scenarios. It ensures that after failover, VMs maintain their exact networking configurations including Application Security Groups (ASG), static IP addresses, Load Balancer backend pools, and Application Gateway backend pools.
 
 ---
 
-## 📁 Files Included
+## Directory: Files Included
 
-### 📜 PowerShell Scripts
+### PowerShell Scripts
 
 | Script | Size | Description |
 |--------|------|-------------|
@@ -16,7 +16,7 @@ This PowerShell automation suite provides comprehensive networking configuration
 | **`Restore-NetworkingConfig.ps1`** | 31KB | Post-failover networking configuration restoration script |
 | **`ASR-NetworkingAutomation.ps1`** | 19KB | Azure Automation runbook integration script |
 
-### 📚 Documentation
+### Documentation
 
 | Document | Description |
 |----------|-------------|
@@ -26,7 +26,7 @@ This PowerShell automation suite provides comprehensive networking configuration
 
 ---
 
-## ⚡ Quick Start
+## Quick Start
 
 ### Prerequisites
 
@@ -44,28 +44,28 @@ Set-AzContext -SubscriptionId "your-subscription-id"
 ```powershell
 # 1. Backup networking configurations (before failover)
 .\Save-NetworkingConfig.ps1 `
-    -ResourceGroupName "webapp-prod-primary-rg" `
-    -SecondaryResourceGroupName "webapp-prod-secondary-rg" `
-    -ProjectName "webapp" `
-    -Environment "prod"
+-ResourceGroupName "webapp-prod-primary-rg" `
+-SecondaryResourceGroupName "webapp-prod-secondary-rg" `
+-ProjectName "webapp" `
+-Environment "prod"
 
 # 2. Restore networking configurations (after failover)
 .\Restore-NetworkingConfig.ps1 `
-    -ResourceGroupName "webapp-prod-secondary-rg" `
-    -ConfigurationPath "."
+-ResourceGroupName "webapp-prod-secondary-rg" `
+-ConfigurationPath "."
 
 # 3. Preview changes before applying (recommended)
 .\Restore-NetworkingConfig.ps1 `
-    -ResourceGroupName "webapp-prod-secondary-rg" `
-    -DryRun `
-    -Detailed
+-ResourceGroupName "webapp-prod-secondary-rg" `
+-DryRun `
+-Detailed
 ```
 
 ---
 
-## 🛡️ Key Features
+## Key Features
 
-### ✅ Complete Configuration Backup
+### DONE Complete Configuration Backup
 - **Application Security Groups** - ASG memberships and associations
 - **Static IP Addresses** - Private and public IP configurations
 - **Load Balancer Backend Pools** - LB backend pool memberships
@@ -73,14 +73,14 @@ Set-AzContext -SubscriptionId "your-subscription-id"
 - **Network Security Groups** - NSG rules and assignments
 - **Network Interface Settings** - NIC configurations and properties
 
-### ✅ Intelligent Restoration
+### DONE Intelligent Restoration
 - **Configuration Comparison** - Automatic detection of missing configurations
 - **Cross-Region Mapping** - Smart resource name mapping for failover regions
 - **Selective Restoration** - Target specific VMs or configuration types
 - **Dry-Run Mode** - Preview changes before applying
 - **Force Mode** - Unattended execution for automation scenarios
 
-### ✅ Enterprise Integration
+### DONE Enterprise Integration
 - **Azure Automation** - Full runbook integration with managed identity
 - **Storage Persistence** - Configuration backup to Azure Storage
 - **Comprehensive Logging** - Detailed audit trails and monitoring
@@ -88,28 +88,28 @@ Set-AzContext -SubscriptionId "your-subscription-id"
 
 ---
 
-## 📋 Usage Scenarios
+## Usage Scenarios
 
 ### Scenario 1: Manual Planned Failover
 
 ```powershell
 # Step 1: Backup configurations before failover
 .\Save-NetworkingConfig.ps1 `
-    -ResourceGroupName "webapp-prod-eastus-rg" `
-    -SecondaryResourceGroupName "webapp-prod-westus2-rg" `
-    -ProjectName "webapp" `
-    -Environment "prod" `
-    -StorageAccountName "asrnetworkconfigs" `
-    -StorageResourceGroupName "shared-services-rg" `
-    -IncludeAppGateway `
-    -IncludeLoadBalancer
+-ResourceGroupName "webapp-prod-eastus-rg" `
+-SecondaryResourceGroupName "webapp-prod-westus2-rg" `
+-ProjectName "webapp" `
+-Environment "prod" `
+-StorageAccountName "asrnetworkconfigs" `
+-StorageResourceGroupName "shared-services-rg" `
+-IncludeAppGateway `
+-IncludeLoadBalancer
 
 # Step 2: Perform ASR failover (via Azure portal or automation)
 
 # Step 3: Restore configurations in secondary region
 .\Restore-NetworkingConfig.ps1 `
-    -ResourceGroupName "webapp-prod-westus2-rg" `
-    -Force
+-ResourceGroupName "webapp-prod-westus2-rg" `
+-Force
 ```
 
 ### Scenario 2: Automated ASR Integration
@@ -117,17 +117,17 @@ Set-AzContext -SubscriptionId "your-subscription-id"
 ```powershell
 # Azure Automation runbook execution
 .\ASR-NetworkingAutomation.ps1 `
-    -Operation "Backup" `
-    -ResourceGroupName "webapp-prod-primary-rg" `
-    -StorageAccountName "asrnetworkconfigs" `
-    -StorageResourceGroupName "shared-services-rg"
+-Operation "Backup" `
+-ResourceGroupName "webapp-prod-primary-rg" `
+-StorageAccountName "asrnetworkconfigs" `
+-StorageResourceGroupName "shared-services-rg"
 
 # Post-failover automation
 .\ASR-NetworkingAutomation.ps1 `
-    -Operation "Restore" `
-    -ResourceGroupName "webapp-prod-secondary-rg" `
-    -StorageAccountName "asrnetworkconfigs" `
-    -StorageResourceGroupName "shared-services-rg"
+-Operation "Restore" `
+-ResourceGroupName "webapp-prod-secondary-rg" `
+-StorageAccountName "asrnetworkconfigs" `
+-StorageResourceGroupName "shared-services-rg"
 ```
 
 ### Scenario 3: Selective VM Restoration
@@ -135,47 +135,47 @@ Set-AzContext -SubscriptionId "your-subscription-id"
 ```powershell
 # Restore only critical web tier VMs
 .\Restore-NetworkingConfig.ps1 `
-    -ResourceGroupName "webapp-prod-secondary-rg" `
-    -VmNames @("web-vm-1", "web-vm-2", "web-vm-3") `
-    -Detailed `
-    -Force
+-ResourceGroupName "webapp-prod-secondary-rg" `
+-VmNames @("web-vm-1", "web-vm-2", "web-vm-3") `
+-Detailed `
+-Force
 ```
 
 ---
 
-## 🔧 Configuration Examples
+## Configuration Examples
 
 ### Example Configuration Structure
 
 ```json
 {
-  "VmName": "web-vm-1",
-  "VmId": "/subscriptions/.../virtualMachines/web-vm-1",
-  "NetworkInterfaces": [
-    {
-      "Name": "web-vm-1-nic",
-      "ApplicationSecurityGroups": [
-        {
-          "IpConfigurationName": "ipconfig1",
-          "AsgName": "web-tier-asg",
-          "AsgResourceGroup": "webapp-prod-eastus-rg"
-        }
-      ],
-      "StaticIpConfigurations": [
-        {
-          "IpConfigurationName": "ipconfig1",
-          "StaticPrivateIpAddress": "10.1.1.10"
-        }
-      ],
-      "LoadBalancerBackendPools": [
-        {
-          "IpConfigurationName": "ipconfig1",
-          "LoadBalancerName": "web-lb-primary",
-          "BackendPoolName": "web-backend-pool"
-        }
-      ]
-    }
-  ]
+"VmName": "web-vm-1",
+"VmId": "/subscriptions/.../virtualMachines/web-vm-1",
+"NetworkInterfaces": [
+{
+"Name": "web-vm-1-nic",
+"ApplicationSecurityGroups": [
+{
+"IpConfigurationName": "ipconfig1",
+"AsgName": "web-tier-asg",
+"AsgResourceGroup": "webapp-prod-eastus-rg"
+}
+],
+"StaticIpConfigurations": [
+{
+"IpConfigurationName": "ipconfig1",
+"StaticPrivateIpAddress": "10.1.1.10"
+}
+],
+"LoadBalancerBackendPools": [
+{
+"IpConfigurationName": "ipconfig1",
+"LoadBalancerName": "web-lb-primary",
+"BackendPoolName": "web-backend-pool"
+}
+]
+}
+]
 }
 ```
 
@@ -185,14 +185,14 @@ The scripts automatically map primary region resources to secondary region equiv
 
 ```powershell
 # Primary Region Resources → Secondary Region Resources
-"web-lb-primary"     → "web-lb-secondary"
+"web-lb-primary" → "web-lb-secondary"
 "app-gateway-primary" → "app-gateway-secondary"
-"web-tier-asg"       → "web-tier-asg" (same name)
+"web-tier-asg" → "web-tier-asg" (same name)
 ```
 
 ---
 
-## 🛡️ Security Considerations
+## Security Considerations
 
 ### Required Permissions
 
@@ -219,7 +219,7 @@ Connect-AzAccount -Identity
 
 ---
 
-## 📊 Monitoring & Logging
+## Monitoring & Logging
 
 ### Log Files Generated
 
@@ -233,14 +233,14 @@ Connect-AzAccount -Identity
 [2024-12-01 14:30:22] [INFO] === Azure Site Recovery Networking Configuration Backup ===
 [2024-12-01 14:30:23] [SUCCESS] Connected to Azure subscription: Production Subscription
 [2024-12-01 14:30:24] [INFO] Processing VM: web-vm-1
-[2024-12-01 14:30:25] [INFO]   Processing NIC: web-vm-1-nic
-[2024-12-01 14:30:26] [SUCCESS]   Saved configuration for web-vm-1 to: web-vm-1-networking-config-20241201-143022.json
-[2024-12-01 14:30:27] [INFO]     NICs: 1, ASG memberships: 2, Static IPs: 1, LB pools: 1
+[2024-12-01 14:30:25] [INFO] Processing NIC: web-vm-1-nic
+[2024-12-01 14:30:26] [SUCCESS] Saved configuration for web-vm-1 to: web-vm-1-networking-config-20241201-143022.json
+[2024-12-01 14:30:27] [INFO] NICs: 1, ASG memberships: 2, Static IPs: 1, LB pools: 1
 ```
 
 ---
 
-## 🔍 Troubleshooting
+## Troubleshooting
 
 ### Common Issues
 
@@ -260,15 +260,15 @@ $VerbosePreference = "Continue"
 $DebugPreference = "Continue"
 
 .\Restore-NetworkingConfig.ps1 `
-    -ResourceGroupName "webapp-prod-secondary-rg" `
-    -Detailed `
-    -DryRun `
-    -Verbose
+-ResourceGroupName "webapp-prod-secondary-rg" `
+-Detailed `
+-DryRun `
+-Verbose
 ```
 
 ---
 
-## 📞 Support & Documentation
+## Support & Documentation
 
 ### Quick Reference
 
@@ -287,7 +287,7 @@ $DebugPreference = "Continue"
 
 ---
 
-## 🎯 Production Deployment
+## TARGET Production Deployment
 
 ### Checklist
 
@@ -311,7 +311,7 @@ $DebugPreference = "Continue"
 
 ---
 
-## 📋 Version Information
+## Version Information
 
 - **Version**: 1.0.0
 - **Last Updated**: 2024-12-01

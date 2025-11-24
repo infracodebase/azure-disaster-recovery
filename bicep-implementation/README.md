@@ -5,31 +5,31 @@ This folder contains the complete Azure Bicep Infrastructure as Code (IaC) imple
 
 ---
 
-## 📁 Folder Structure
+## Directory: Folder Structure
 
 ```
 bicep-implementation/
-├── README.md                          # This file
-├── main.bicep                         # Main Bicep template
-├── main.bicepparam                    # Bicep parameters file
-├── VMSS_GUIDE.md                      # VMSS implementation guide
-├── .gitignore                         # Git ignore patterns
-├── modules/                           # Reusable Bicep modules
-│   ├── region.bicep                   # Regional deployment module
-│   ├── vm.bicep                       # Virtual machine template
-│   ├── vmss.bicep                     # Virtual Machine Scale Sets module
-│   ├── recovery-services.bicep        # Site Recovery configuration
-│   ├── traffic-manager.bicep          # Global load balancing
-│   └── vnet-peering.bicep            # Cross-region networking
-└── scripts/                          # VM initialization scripts
-    ├── web-setup.sh                  # Web tier configuration
-    ├── app-setup.sh                  # App tier configuration
-    └── data-setup-enhanced.sh        # Database with replication
+├── README.md # This file
+├── main.bicep # Main Bicep template
+├── main.bicepparam # Bicep parameters file
+├── VMSS_GUIDE.md # VMSS implementation guide
+├── .gitignore # Git ignore patterns
+├── modules/ # Reusable Bicep modules
+│ ├── region.bicep # Regional deployment module
+│ ├── vm.bicep # Virtual machine template
+│ ├── vmss.bicep # Virtual Machine Scale Sets module
+│ ├── recovery-services.bicep # Site Recovery configuration
+│ ├── traffic-manager.bicep # Global load balancing
+│ └── vnet-peering.bicep # Cross-region networking
+└── scripts/ # VM initialization scripts
+├── web-setup.sh # Web tier configuration
+├── app-setup.sh # App tier configuration
+└── data-setup-enhanced.sh # Database with replication
 ```
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 ### **Prerequisites**
 - Azure CLI installed and authenticated
@@ -50,22 +50,22 @@ az account set --subscription "your-subscription-id"
 
 # 4. Deploy the main template
 az deployment sub create \
-  --location "East US" \
-  --template-file main.bicep \
-  --parameters vmAdminPassword='YourSecurePassword123!'
+--location "East US" \
+--template-file main.bicep \
+--parameters vmAdminPassword='YourSecurePassword123!'
 
 # Alternative: Use parameters file
 az deployment sub create \
-  --location "East US" \
-  --template-file main.bicep \
-  --parameters main.bicepparam
+--location "East US" \
+--template-file main.bicep \
+--parameters main.bicepparam
 ```
 
 ### **Expected Deployment Time**: 45-60 minutes for complete infrastructure
 
 ---
 
-## 🏗️ Architecture Overview
+## Architecture Overview
 
 ### **Infrastructure Components**
 - **Flexible Deployment** - Individual VMs or VMSS with auto-scaling
@@ -76,23 +76,23 @@ az deployment sub create \
 - **High availability** with Availability Zones
 
 ### **VMSS Auto-scaling Features**
-- **🚀 Virtual Machine Scale Sets** for web and app tiers
-- **📊 Auto-scaling** based on CPU, memory, and network metrics
-- **⏰ Time-based scaling** profiles (business hours, weekends)
-- **💰 Cost optimization** through intelligent scaling (25-40% savings)
-- **🔍 Health monitoring** with application health extensions
+- ** Virtual Machine Scale Sets** for web and app tiers
+- ** Auto-scaling** based on CPU, memory, and network metrics
+- ** Time-based scaling** profiles (business hours, weekends)
+- ** Cost optimization** through intelligent scaling (25-40% savings)
+- ** Health monitoring** with application health extensions
 
 ### **Key Features**
-- ✅ **99.99% SLA** with Availability Zones
-- ✅ **Complete DR** with VM replication and database replication
-- ✅ **Security hardening** with NSGs and encryption
-- ✅ **Monitoring** with health checks and diagnostics
-- ✅ **Cost optimization** with configurable VM sizes and auto-scaling
-- ✅ **VMSS implementation** with Bicep-native auto-scaling rules
+- DONE **99.99% SLA** with Availability Zones
+- DONE **Complete DR** with VM replication and database replication
+- DONE **Security hardening** with NSGs and encryption
+- DONE **Monitoring** with health checks and diagnostics
+- DONE **Cost optimization** with configurable VM sizes and auto-scaling
+- DONE **VMSS implementation** with Bicep-native auto-scaling rules
 
 ---
 
-## 🔧 Configuration Options
+## Configuration Options
 
 ### **Main Template Parameters**
 | Parameter | Description | Default |
@@ -114,32 +114,32 @@ param enableAutoScaling = true
 
 // Auto-scaling thresholds
 param autoScalingConfig = {
-  webTier: {
-    minInstances: 2
-    maxInstances: 10
-    scaleOutCpuThreshold: 75
-    scaleInCpuThreshold: 25
-  }
-  appTier: {
-    minInstances: 2
-    maxInstances: 8
-    scaleOutCpuThreshold: 70
-    scaleInCpuThreshold: 30
-  }
+webTier: {
+minInstances: 2
+maxInstances: 10
+scaleOutCpuThreshold: 75
+scaleInCpuThreshold: 25
+}
+appTier: {
+minInstances: 2
+maxInstances: 8
+scaleOutCpuThreshold: 70
+scaleInCpuThreshold: 30
+}
 }
 ```
 
 ### **VM Size Configuration**
 ```bicep
 // Configurable VM sizes for cost optimization
-param vmSizeWeb string = 'Standard_D2s_v3'    // 2 cores, 8GB RAM
-param vmSizeApp string = 'Standard_D4s_v3'    // 4 cores, 16GB RAM
-param vmSizeData string = 'Standard_D4s_v3'   // 4 cores, 16GB RAM
+param vmSizeWeb string = 'Standard_D2s_v3' // 2 cores, 8GB RAM
+param vmSizeApp string = 'Standard_D4s_v3' // 4 cores, 16GB RAM
+param vmSizeData string = 'Standard_D4s_v3' // 4 cores, 16GB RAM
 ```
 
 ---
 
-## 🛡️ Security Features
+## Security Features
 
 ### **Network Security**
 - **NSG rules** with principle of least privilege
@@ -160,7 +160,7 @@ param vmSizeData string = 'Standard_D4s_v3'   // 4 cores, 16GB RAM
 
 ---
 
-## 📊 Bicep-Specific Features
+## Bicep-Specific Features
 
 ### **Strong Typing**
 ```bicep
@@ -188,35 +188,35 @@ param projectName string = 'webapp'
 ```bicep
 // Deploy VMs only in primary region
 resource webVMs 'Microsoft.Compute/virtualMachines@2024-03-01' = [for i in range(0, vmCount): if (!isDRRegion) {
-  // VM configuration
+// VM configuration
 }]
 ```
 
 ---
 
-## 📈 Deployment Outputs
+## Deployment Outputs
 
 ### **Key Endpoints**
 The deployment provides comprehensive outputs including:
 ```bicep
 output applicationEndpoints object = {
-  globalEndpoint: 'https://${trafficManager.outputs.fqdn}'
-  primaryEndpoint: 'https://${primaryRegion.outputs.loadBalancerFqdn}'
-  secondaryEndpoint: 'https://${secondaryRegion.outputs.loadBalancerFqdn}'
+globalEndpoint: 'https://${trafficManager.outputs.fqdn}'
+primaryEndpoint: 'https://${primaryRegion.outputs.loadBalancerFqdn}'
+secondaryEndpoint: 'https://${secondaryRegion.outputs.loadBalancerFqdn}'
 }
 ```
 
 ---
 
-## 🔍 Bicep Validation
+## Bicep Validation
 
 ### **Template Validation**
 ```bash
 # Validate Bicep template
 az deployment sub validate \
-  --location "East US" \
-  --template-file main.bicep \
-  --parameters vmAdminPassword='TestPassword123!'
+--location "East US" \
+--template-file main.bicep \
+--parameters vmAdminPassword='TestPassword123!'
 
 # Build and check for errors
 az bicep build --file main.bicep
@@ -226,14 +226,14 @@ az bicep build --file main.bicep
 ```bash
 # Preview changes before deployment
 az deployment sub what-if \
-  --location "East US" \
-  --template-file main.bicep \
-  --parameters vmAdminPassword='YourSecurePassword123!'
+--location "East US" \
+--template-file main.bicep \
+--parameters vmAdminPassword='YourSecurePassword123!'
 ```
 
 ---
 
-## 📋 Deployment Checklist
+## Deployment Checklist
 
 ### **Pre-Deployment**
 - [ ] Azure CLI installed and authenticated
@@ -255,47 +255,47 @@ az deployment sub what-if \
 
 ---
 
-## 🛠️ Management Operations
+## Management Operations
 
 ### **VMSS Operations**
 ```bash
 # Enable VMSS with auto-scaling
 az deployment sub create \
-  --location "East US" \
-  --template-file main.bicep \
-  --parameters main.bicepparam \
-  --parameters enableVMSS=true enableAutoScaling=true
+--location "East US" \
+--template-file main.bicep \
+--parameters main.bicepparam \
+--parameters enableVMSS=true enableAutoScaling=true
 
 # Manual scaling for testing
 az vmss scale --resource-group webapp-prod-primary-rg \
-  --name webapp-prod-primary-web-vmss --new-capacity 5
+--name webapp-prod-primary-web-vmss --new-capacity 5
 
 # View autoscale settings
 az monitor autoscale show --resource-group webapp-prod-primary-rg \
-  --name webapp-prod-primary-web-autoscale
+--name webapp-prod-primary-web-autoscale
 ```
 
 ### **VM Size Updates**
 ```bash
 # Update VM sizes for cost optimization
 az deployment sub create \
-  --location "East US" \
-  --template-file main.bicep \
-  --parameters vmAdminPassword='Password123!' vmSizeWeb='Standard_D1s_v3'
+--location "East US" \
+--template-file main.bicep \
+--parameters vmAdminPassword='Password123!' vmSizeWeb='Standard_D1s_v3'
 ```
 
 ### **Environment Updates**
 ```bash
 # Deploy to different environment
 az deployment sub create \
-  --location "East US" \
-  --template-file main.bicep \
-  --parameters environment='staging' projectName='webapp-staging'
+--location "East US" \
+--template-file main.bicep \
+--parameters environment='staging' projectName='webapp-staging'
 ```
 
 ---
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 ### **Common Issues**
 1. **Template Validation Errors**: Check parameter types and constraints
@@ -317,7 +317,7 @@ az monitor activity-log list --resource-group <resource-group-name>
 
 ---
 
-## 📚 Documentation and Resources
+## Documentation and Resources
 
 ### **Implementation Guides**
 - [VMSS_GUIDE.md](./VMSS_GUIDE.md) - Complete VMSS implementation guide with auto-scaling

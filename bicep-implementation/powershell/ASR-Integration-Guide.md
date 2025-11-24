@@ -1,41 +1,41 @@
 # Azure Site Recovery Integration Guide
 
-## 📋 ASR Integration Overview
+## ASR Integration Overview
 
 This guide provides step-by-step instructions for integrating the PowerShell networking automation scripts with Azure Site Recovery (ASR) for automated disaster recovery workflows.
 
 ---
 
-## 🏗️ Architecture Integration
+## Architecture Integration
 
 ### ASR Workflow with Networking Automation
 
 ```mermaid
 graph TD
-    A[Primary Region - Production] --> B[ASR Replication]
-    B --> C[Pre-Failover Script]
-    C --> D[Save Networking Configurations]
-    D --> E[Store in Azure Storage]
-    E --> F[ASR Failover Execution]
-    F --> G[Secondary Region - DR]
-    G --> H[Post-Failover Script]
-    H --> I[Restore Networking Configurations]
-    I --> J[Verify and Complete]
+A[Primary Region - Production] --> B[ASR Replication]
+B --> C[Pre-Failover Script]
+C --> D[Save Networking Configurations]
+D --> E[Store in Azure Storage]
+E --> F[ASR Failover Execution]
+F --> G[Secondary Region - DR]
+G --> H[Post-Failover Script]
+H --> I[Restore Networking Configurations]
+I --> J[Verify and Complete]
 ```
 
 ---
 
-## 🔧 Implementation Steps
+## Implementation Steps
 
 ### Step 1: Create Azure Automation Account
 
 ```powershell
 # Create Automation Account for ASR integration
 $automationParams = @{
-    ResourceGroupName = "shared-services-rg"
-    Name = "asr-networking-automation"
-    Location = "East US"
-    Plan = "Free"
+ResourceGroupName = "shared-services-rg"
+Name = "asr-networking-automation"
+Location = "East US"
+Plan = "Free"
 }
 $automationAccount = New-AzAutomationAccount @automationParams
 ```
@@ -52,7 +52,7 @@ $identity = Get-AzADServicePrincipal -DisplayName "asr-networking-automation"
 # Assign Network Contributor role to primary and secondary resource groups
 $resourceGroups = @("webapp-prod-eastus-rg", "webapp-prod-westus2-rg")
 foreach ($rg in $resourceGroups) {
-    New-AzRoleAssignment -ObjectId $identity.Id -RoleDefinitionName "Network Contributor" -ResourceGroupName $rg
+New-AzRoleAssignment -ObjectId $identity.Id -RoleDefinitionName "Network Contributor" -ResourceGroupName $rg
 }
 ```
 
@@ -62,7 +62,7 @@ foreach ($rg in $resourceGroups) {
 # Import required modules to Automation Account
 $modules = @("Az.Accounts", "Az.Network", "Az.Compute", "Az.Resources", "Az.Storage")
 foreach ($module in $modules) {
-    Import-AzAutomationModule -AutomationAccountName "asr-networking-automation" -ResourceGroupName "shared-services-rg" -Name $module
+Import-AzAutomationModule -AutomationAccountName "asr-networking-automation" -ResourceGroupName "shared-services-rg" -Name $module
 }
 ```
 
@@ -71,12 +71,12 @@ foreach ($module in $modules) {
 ```powershell
 # Import the networking automation runbook
 $runbookParams = @{
-    AutomationAccountName = "asr-networking-automation"
-    ResourceGroupName = "shared-services-rg"
-    Path = "./scripts/ASR-NetworkingAutomation.ps1"
-    Type = "PowerShell"
-    Name = "ASR-NetworkingAutomation"
-    Description = "Automated networking configuration backup and restore for ASR"
+AutomationAccountName = "asr-networking-automation"
+ResourceGroupName = "shared-services-rg"
+Path = "./scripts/ASR-NetworkingAutomation.ps1"
+Type = "PowerShell"
+Name = "ASR-NetworkingAutomation"
+Description = "Automated networking configuration backup and restore for ASR"
 }
 Import-AzAutomationRunbook @runbookParams
 
@@ -89,12 +89,12 @@ Publish-AzAutomationRunbook -AutomationAccountName "asr-networking-automation" -
 ```powershell
 # Create storage account for configuration persistence
 $storageParams = @{
-    ResourceGroupName = "shared-services-rg"
-    Name = "asrnetworkconfigs$(Get-Random)"
-    Location = "East US"
-    SkuName = "Standard_LRS"
-    Kind = "StorageV2"
-    EnableHttpsTrafficOnly = $true
+ResourceGroupName = "shared-services-rg"
+Name = "asrnetworkconfigs$(Get-Random)"
+Location = "East US"
+SkuName = "Standard_LRS"
+Kind = "StorageV2"
+EnableHttpsTrafficOnly = $true
 }
 $storageAccount = New-AzStorageAccount @storageParams
 
@@ -105,22 +105,22 @@ New-AzStorageContainer -Name "networking-configs" -Context $ctx -Permission Off
 
 ---
 
-## 📋 Recovery Plan Configuration
+## Recovery Plan Configuration
 
 ### Create ASR Recovery Plan
 
 ```powershell
 # Create Recovery Plan with networking automation
 $recoveryPlan = @{
-    Name = "webapp-dr-plan"
-    PrimaryFabric = "eastus-fabric"
-    RecoveryFabric = "westus2-fabric"
-    ReplicationProtectedItems = @(
-        "web-vm-1",
-        "web-vm-2",
-        "app-vm-1",
-        "db-vm-1"
-    )
+Name = "webapp-dr-plan"
+PrimaryFabric = "eastus-fabric"
+RecoveryFabric = "westus2-fabric"
+ReplicationProtectedItems = @(
+"web-vm-1",
+"web-vm-2",
+"app-vm-1",
+"db-vm-1"
+)
 }
 ```
 
@@ -130,18 +130,18 @@ Add the following script as a **Pre-Failover** action in your ASR Recovery Plan:
 
 ```json
 {
-    "ScriptType": "PowerShell",
-    "ScriptLocation": "AutomationAccount",
-    "AutomationAccountName": "asr-networking-automation",
-    "RunbookName": "ASR-NetworkingAutomation",
-    "Parameters": {
-        "Operation": "Backup",
-        "ResourceGroupName": "webapp-prod-eastus-rg",
-        "StorageAccountName": "asrnetworkconfigs123456",
-        "StorageResourceGroupName": "shared-services-rg",
-        "VmNames": "web-vm-1,web-vm-2,app-vm-1,db-vm-1"
-    },
-    "FabricLocation": "Primary"
+"ScriptType": "PowerShell",
+"ScriptLocation": "AutomationAccount",
+"AutomationAccountName": "asr-networking-automation",
+"RunbookName": "ASR-NetworkingAutomation",
+"Parameters": {
+"Operation": "Backup",
+"ResourceGroupName": "webapp-prod-eastus-rg",
+"StorageAccountName": "asrnetworkconfigs123456",
+"StorageResourceGroupName": "shared-services-rg",
+"VmNames": "web-vm-1,web-vm-2,app-vm-1,db-vm-1"
+},
+"FabricLocation": "Primary"
 }
 ```
 
@@ -151,39 +151,39 @@ Add the following script as a **Post-Failover** action in your ASR Recovery Plan
 
 ```json
 {
-    "ScriptType": "PowerShell",
-    "ScriptLocation": "AutomationAccount",
-    "AutomationAccountName": "asr-networking-automation",
-    "RunbookName": "ASR-NetworkingAutomation",
-    "Parameters": {
-        "Operation": "Restore",
-        "ResourceGroupName": "webapp-prod-westus2-rg",
-        "StorageAccountName": "asrnetworkconfigs123456",
-        "StorageResourceGroupName": "shared-services-rg",
-        "VmNames": "web-vm-1,web-vm-2,app-vm-1,db-vm-1"
-    },
-    "FabricLocation": "Recovery"
+"ScriptType": "PowerShell",
+"ScriptLocation": "AutomationAccount",
+"AutomationAccountName": "asr-networking-automation",
+"RunbookName": "ASR-NetworkingAutomation",
+"Parameters": {
+"Operation": "Restore",
+"ResourceGroupName": "webapp-prod-westus2-rg",
+"StorageAccountName": "asrnetworkconfigs123456",
+"StorageResourceGroupName": "shared-services-rg",
+"VmNames": "web-vm-1,web-vm-2,app-vm-1,db-vm-1"
+},
+"FabricLocation": "Recovery"
 }
 ```
 
 ---
 
-## 🔄 Test Failover Process
+## Test Failover Process
 
 ### Manual Test Execution
 
 ```powershell
 # 1. Test backup operation
 $backupParams = @{
-    AutomationAccountName = "asr-networking-automation"
-    ResourceGroupName = "shared-services-rg"
-    Name = "ASR-NetworkingAutomation"
-    Parameters = @{
-        Operation = "Backup"
-        ResourceGroupName = "webapp-prod-eastus-rg"
-        StorageAccountName = "asrnetworkconfigs123456"
-        StorageResourceGroupName = "shared-services-rg"
-    }
+AutomationAccountName = "asr-networking-automation"
+ResourceGroupName = "shared-services-rg"
+Name = "ASR-NetworkingAutomation"
+Parameters = @{
+Operation = "Backup"
+ResourceGroupName = "webapp-prod-eastus-rg"
+StorageAccountName = "asrnetworkconfigs123456"
+StorageResourceGroupName = "shared-services-rg"
+}
 }
 Start-AzAutomationRunbook @backupParams
 
@@ -193,16 +193,16 @@ Get-AzAutomationJobOutput -AutomationAccountName "asr-networking-automation" -Re
 
 # 3. Test restore operation
 $restoreParams = @{
-    AutomationAccountName = "asr-networking-automation"
-    ResourceGroupName = "shared-services-rg"
-    Name = "ASR-NetworkingAutomation"
-    Parameters = @{
-        Operation = "Restore"
-        ResourceGroupName = "webapp-test-westus2-rg"
-        StorageAccountName = "asrnetworkconfigs123456"
-        StorageResourceGroupName = "shared-services-rg"
-        DryRun = $true
-    }
+AutomationAccountName = "asr-networking-automation"
+ResourceGroupName = "shared-services-rg"
+Name = "ASR-NetworkingAutomation"
+Parameters = @{
+Operation = "Restore"
+ResourceGroupName = "webapp-test-westus2-rg"
+StorageAccountName = "asrnetworkconfigs123456"
+StorageResourceGroupName = "shared-services-rg"
+DryRun = $true
+}
 }
 Start-AzAutomationRunbook @restoreParams
 ```
@@ -212,17 +212,17 @@ Start-AzAutomationRunbook @restoreParams
 ```powershell
 # Execute test failover with networking automation
 $testFailover = @{
-    RecoveryPlanName = "webapp-dr-plan"
-    Direction = "PrimaryToRecovery"
-    RecoveryPoint = "Latest"
-    TestNetworkId = "/subscriptions/{sub}/resourceGroups/test-rg/providers/Microsoft.Network/virtualNetworks/test-vnet"
+RecoveryPlanName = "webapp-dr-plan"
+Direction = "PrimaryToRecovery"
+RecoveryPoint = "Latest"
+TestNetworkId = "/subscriptions/{sub}/resourceGroups/test-rg/providers/Microsoft.Network/virtualNetworks/test-vnet"
 }
 Start-AzRecoveryServicesAsrTestFailoverJob @testFailover
 ```
 
 ---
 
-## 📊 Monitoring and Alerting
+## Monitoring and Alerting
 
 ### Log Analytics Configuration
 
@@ -232,13 +232,13 @@ $workspace = Get-AzOperationalInsightsWorkspace -ResourceGroupName "monitoring-r
 
 # Configure data collection for Automation Account
 $diagnosticSettings = @{
-    Name = "ASR-Networking-Diagnostics"
-    ResourceId = $automationAccount.ResourceId
-    WorkspaceId = $workspace.ResourceId
-    Log = @(
-        @{Category = "JobLogs"; Enabled = $true; RetentionPolicy = @{Enabled = $true; Days = 30}}
-        @{Category = "JobStreams"; Enabled = $true; RetentionPolicy = @{Enabled = $true; Days = 30}}
-    )
+Name = "ASR-Networking-Diagnostics"
+ResourceId = $automationAccount.ResourceId
+WorkspaceId = $workspace.ResourceId
+Log = @(
+@{Category = "JobLogs"; Enabled = $true; RetentionPolicy = @{Enabled = $true; Days = 30}}
+@{Category = "JobStreams"; Enabled = $true; RetentionPolicy = @{Enabled = $true; Days = 30}}
+)
 }
 Set-AzDiagnosticSetting @diagnosticSettings
 ```
@@ -258,22 +258,22 @@ AutomationAccountLogs
 ```powershell
 # Create alert for ASR networking failures
 $alertRule = @{
-    Name = "ASR-NetworkingAutomation-Failures"
-    ResourceGroupName = "monitoring-rg"
-    TargetResourceId = $workspace.ResourceId
-    Query = "AutomationAccountLogs | where RunbookName_s == 'ASR-NetworkingAutomation' | where ResultType == 'Failed'"
-    TimeAggregationOperator = "GreaterThan"
-    Threshold = 0
-    FrequencyInMinutes = 5
-    TimeWindowInMinutes = 15
-    ActionGroupId = "/subscriptions/{sub}/resourceGroups/monitoring-rg/providers/Microsoft.Insights/actionGroups/critical-alerts"
+Name = "ASR-NetworkingAutomation-Failures"
+ResourceGroupName = "monitoring-rg"
+TargetResourceId = $workspace.ResourceId
+Query = "AutomationAccountLogs | where RunbookName_s == 'ASR-NetworkingAutomation' | where ResultType == 'Failed'"
+TimeAggregationOperator = "GreaterThan"
+Threshold = 0
+FrequencyInMinutes = 5
+TimeWindowInMinutes = 15
+ActionGroupId = "/subscriptions/{sub}/resourceGroups/monitoring-rg/providers/Microsoft.Insights/actionGroups/critical-alerts"
 }
 New-AzScheduledQueryRule @alertRule
 ```
 
 ---
 
-## 🔄 Failover Scenarios
+## Failover Scenarios
 
 ### Scenario 1: Planned Maintenance Failover
 
@@ -316,7 +316,7 @@ Start-AzRecoveryServicesAsrTestFailoverCleanupJob -RecoveryPlan $recoveryPlan
 
 ---
 
-## 🛡️ Security Best Practices
+## Security Best Practices
 
 ### Network Security
 
@@ -324,8 +324,8 @@ Start-AzRecoveryServicesAsrTestFailoverCleanupJob -RecoveryPlan $recoveryPlan
 # Restrict storage account network access
 $storageAccount = Get-AzStorageAccount -ResourceGroupName "shared-services-rg" -Name "asrnetworkconfigs123456"
 $vnetRule = @{
-    VirtualNetworkResourceId = "/subscriptions/{sub}/resourceGroups/shared-services-rg/providers/Microsoft.Network/virtualNetworks/shared-vnet/subnets/automation-subnet"
-    Action = "Allow"
+VirtualNetworkResourceId = "/subscriptions/{sub}/resourceGroups/shared-services-rg/providers/Microsoft.Network/virtualNetworks/shared-vnet/subnets/automation-subnet"
+Action = "Allow"
 }
 Add-AzStorageAccountNetworkRule -ResourceGroupName "shared-services-rg" -Name "asrnetworkconfigs123456" -VirtualNetworkRule $vnetRule
 Set-AzStorageAccount -ResourceGroupName "shared-services-rg" -Name "asrnetworkconfigs123456" -NetworkRuleSet @{DefaultAction="Deny"}
@@ -336,29 +336,29 @@ Set-AzStorageAccount -ResourceGroupName "shared-services-rg" -Name "asrnetworkco
 ```powershell
 # Create custom role for ASR networking operations
 $customRole = @{
-    Name = "ASR Network Automation"
-    Description = "Custom role for ASR networking automation"
-    Actions = @(
-        "Microsoft.Network/networkInterfaces/read",
-        "Microsoft.Network/networkInterfaces/write",
-        "Microsoft.Network/applicationSecurityGroups/read",
-        "Microsoft.Network/loadBalancers/read",
-        "Microsoft.Network/applicationGateways/read",
-        "Microsoft.Network/publicIPAddresses/read",
-        "Microsoft.Network/publicIPAddresses/write",
-        "Microsoft.Compute/virtualMachines/read",
-        "Microsoft.Storage/storageAccounts/*/read",
-        "Microsoft.Storage/storageAccounts/*/write"
-    )
-    NotActions = @()
-    Scopes = @("/subscriptions/your-subscription-id")
+Name = "ASR Network Automation"
+Description = "Custom role for ASR networking automation"
+Actions = @(
+"Microsoft.Network/networkInterfaces/read",
+"Microsoft.Network/networkInterfaces/write",
+"Microsoft.Network/applicationSecurityGroups/read",
+"Microsoft.Network/loadBalancers/read",
+"Microsoft.Network/applicationGateways/read",
+"Microsoft.Network/publicIPAddresses/read",
+"Microsoft.Network/publicIPAddresses/write",
+"Microsoft.Compute/virtualMachines/read",
+"Microsoft.Storage/storageAccounts/*/read",
+"Microsoft.Storage/storageAccounts/*/write"
+)
+NotActions = @()
+Scopes = @("/subscriptions/your-subscription-id")
 }
 New-AzRoleDefinition -Role $customRole
 ```
 
 ---
 
-## 📋 Checklist for Production Deployment
+## Checklist for Production Deployment
 
 ### Pre-Deployment
 
@@ -389,7 +389,7 @@ New-AzRoleDefinition -Role $customRole
 
 ---
 
-## 📞 Support Information
+## Support Information
 
 ### Escalation Contacts
 

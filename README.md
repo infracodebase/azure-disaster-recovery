@@ -1,50 +1,50 @@
 # Azure Multi-Tier Disaster Recovery Architecture
 ## Complete Enterprise Implementation with Terraform and Bicep
 
-**🏆 Production-Ready | 🛡️ Enterprise Security | 💰 Cost-Optimized | 📊 100% Architecture Fidelity**
+**Production-Ready | Enterprise Security | Cost-Optimized | 100% Architecture Fidelity**
 
 ---
 
-## 📖 Project Overview
+## Project Overview
 
 This repository contains a complete, enterprise-grade implementation of a multi-tier web application with cross-region disaster recovery on Microsoft Azure. The solution provides **100% faithful representation** between the architectural design and Infrastructure as Code implementation.
 
-### **🎯 Key Achievements**
-- ✅ **Zero Critical Vulnerabilities** - Enterprise security validation
-- ✅ **100% Design Fidelity** - Complete architecture implementation
-- ✅ **99.99% SLA Capability** - Availability Zones with disaster recovery
-- ✅ **Production Ready** - Comprehensive testing and validation
-- ✅ **Cost Optimized** - $1,240-2,180/month with optimization roadmap
+### **Key Achievements**
+- **Zero Critical Vulnerabilities** - Enterprise security validation
+- **100% Design Fidelity** - Complete architecture implementation
+- **99.99% SLA Capability** - Availability Zones with disaster recovery
+- **Production Ready** - Comprehensive testing and validation
+- **Cost Optimized** - $1,240-2,180/month with optimization roadmap
 
 ---
 
-## 🏗️ Architecture Overview
+## Architecture Overview
 
 ### **Multi-Tier Design**
 ```
 ┌─────────────────┬─────────────────┐
-│   PRIMARY       │   SECONDARY     │
-│   (East US)     │   (West US 2)   │
+│ PRIMARY │ SECONDARY │
+│ (East US) │ (West US 2) │
 ├─────────────────┼─────────────────┤
 │ ┌─────────────┐ │ ┌─────────────┐ │
-│ │  Web Tier   │ │ │  Web Tier   │ │
-│ │   2x VMs    │ │ │   2x VMs    │ │
+│ │ Web Tier │ │ │ Web Tier │ │
+│ │ 2x VMs │ │ │ 2x VMs │ │
 │ └─────────────┘ │ └─────────────┘ │
 │ ┌─────────────┐ │ ┌─────────────┐ │
-│ │  App Tier   │ │ │  App Tier   │ │
-│ │   2x VMs    │ │ │   2x VMs    │ │
+│ │ App Tier │ │ │ App Tier │ │
+│ │ 2x VMs │ │ │ 2x VMs │ │
 │ └─────────────┘ │ └─────────────┘ │
 │ ┌─────────────┐ │ ┌─────────────┐ │
-│ │ Data Tier   │ │ │ Data Tier   │ │
-│ │   2x VMs    │ │ │   2x VMs    │ │
+│ │ Data Tier │ │ │ Data Tier │ │
+│ │ 2x VMs │ │ │ 2x VMs │ │
 │ │ (MySQL M/S) │ │ │ (MySQL M/S) │ │
 │ └─────────────┘ │ └─────────────┘ │
 └─────────────────┴─────────────────┘
-         │                 │
-    ┌────▼─────────────────▼────┐
-    │   Traffic Manager         │
-    │   (Global Load Balancer)  │
-    └───────────────────────────┘
+│ │
+┌────▼─────────────────▼────┐
+│ Traffic Manager │
+│ (Global Load Balancer) │
+└───────────────────────────┘
 ```
 
 ### **Core Components**
@@ -59,50 +59,50 @@ This repository contains a complete, enterprise-grade implementation of a multi-
 
 ---
 
-## 📁 Repository Structure
+## Repository Structure
 
 ```
-📦 Azure Multi-Tier DR Architecture
-├── 📁 terraform-implementation/        # 🏗️ Terraform Infrastructure as Code
-│   ├── 📄 main.tf                     # Main Terraform configuration
-│   ├── 📄 variables.tf                # Input variables and validation
-│   ├── 📄 outputs.tf                  # Output values and endpoints
-│   ├── 📁 modules/region/             # Reusable regional module
-│   │   ├── 📄 main.tf                 # Regional infrastructure
-│   │   ├── 📄 compute.tf              # VM and compute resources
-│   │   ├── 📄 vmss.tf                 # Virtual Machine Scale Sets
-│   │   ├── 📄 autoscaling.tf          # Auto-scaling rules and policies
-│   │   ├── 📄 outputs.tf              # Regional outputs
-│   │   └── 📁 scripts/               # VM initialization scripts
-│   └── 📄 README.md                  # Terraform deployment guide
+Azure Multi-Tier DR Architecture
+├── terraform-implementation/ # Terraform Infrastructure as Code
+│ ├── main.tf # Main Terraform configuration
+│ ├── variables.tf # Input variables and validation
+│ ├── outputs.tf # Output values and endpoints
+│ ├── modules/region/ # Reusable regional module
+│ │ ├── main.tf # Regional infrastructure
+│ │ ├── compute.tf # VM and compute resources
+│ │ ├── vmss.tf # Virtual Machine Scale Sets
+│ │ ├── autoscaling.tf # Auto-scaling rules and policies
+│ │ ├── outputs.tf # Regional outputs
+│ │ └── scripts/ # VM initialization scripts
+│ └── README.md # Terraform deployment guide
 │
-├── 📁 bicep-implementation/           # 🏗️ Bicep Infrastructure as Code
-│   ├── 📄 main.bicep                  # Main Bicep template
-│   ├── 📄 main.bicepparam             # Bicep parameters file
-│   ├── 📁 modules/                    # Bicep modules
-│   │   ├── 📄 region.bicep            # Regional deployment module
-│   │   ├── 📄 vm.bicep                # Virtual machine template
-│   │   ├── 📄 recovery-services.bicep # Site Recovery configuration
-│   │   └── 📄 traffic-manager.bicep   # Global load balancing
-│   ├── 📁 scripts/                    # VM initialization scripts
-│   └── 📄 README.md                  # Bicep deployment guide
+├── bicep-implementation/ # Bicep Infrastructure as Code
+│ ├── main.bicep # Main Bicep template
+│ ├── main.bicepparam # Bicep parameters file
+│ ├── modules/ # Bicep modules
+│ │ ├── region.bicep # Regional deployment module
+│ │ ├── vm.bicep # Virtual machine template
+│ │ ├── recovery-services.bicep # Site Recovery configuration
+│ │ └── traffic-manager.bicep # Global load balancing
+│ ├── scripts/ # VM initialization scripts
+│ └── README.md # Bicep deployment guide
 │
-├── 📁 cost-analysis/                  # 💰 Cost Breakdown & Optimization
-│   ├── 📄 COST_BREAKDOWN.md          # Detailed cost analysis ($1,240-2,180/mo)
-│   ├── 📄 COST_OPTIMIZATION_GUIDE.md # 31% cost reduction strategies
-│   └── 📄 cost_calculator.csv        # Interactive cost calculator
+├── cost-analysis/ # Cost Breakdown & Optimization
+│ ├── COST_BREAKDOWN.md # Detailed cost analysis ($1,240-2,180/mo)
+│ ├── COST_OPTIMIZATION_GUIDE.md # 31% cost reduction strategies
+│ └── cost_calculator.csv # Interactive cost calculator
 │
-├── 📁 security-compliance/           # 🛡️ Security & Compliance Reports
-│   ├── 📄 SECURITY_ANALYSIS.md       # Comprehensive security assessment
-│   ├── 📄 WELL_ARCHITECTED_COMPLIANCE.md # Azure Well-Architected compliance
-│   └── 📄 CODE_QUALITY_SUMMARY.md    # Code quality and security summary
+├── security-compliance/ # Security & Compliance Reports
+│ ├── SECURITY_ANALYSIS.md # Comprehensive security assessment
+│ ├── WELL_ARCHITECTED_COMPLIANCE.md # Azure Well-Architected compliance
+│ └── CODE_QUALITY_SUMMARY.md # Code quality and security summary
 │
-└── 📄 README.md                      # This file
+└── README.md # This file
 ```
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 ### **Prerequisites**
 - Azure CLI installed and authenticated
@@ -127,38 +127,38 @@ cd bicep-implementation/
 
 # 2. Deploy to Azure
 az deployment sub create \
-  --location "East US" \
-  --template-file main.bicep \
-  --parameters vmAdminPassword='YourSecurePassword123!'
+--location "East US" \
+--template-file main.bicep \
+--parameters vmAdminPassword='YourSecurePassword123!'
 ```
 
 ### **Expected Deployment Time**: 45-60 minutes for complete infrastructure
 
 ---
 
-## 🛡️ Security & Compliance
+## Security & Compliance
 
 ### **Security Rating: EXCELLENT (96/100)**
-- ✅ **Zero Critical Vulnerabilities** identified
-- ✅ **Enterprise Security Controls** implemented
-- ✅ **Defense-in-Depth Architecture** with multi-layered protection
-- ✅ **TLS 1.2 Minimum** encryption enforced
-- ✅ **No Hardcoded Credentials** - secure parameter handling
+- **Zero Critical Vulnerabilities** identified
+- **Enterprise Security Controls** implemented
+- **Defense-in-Depth Architecture** with multi-layered protection
+- **TLS 1.2 Minimum** encryption enforced
+- **No Hardcoded Credentials** - secure parameter handling
 
 ### **Azure Well-Architected Framework Compliance: 95/100**
 | Pillar | Score | Status |
 |--------|-------|--------|
-| Reliability | 98/100 | ⭐⭐⭐⭐⭐ |
-| Security | 96/100 | ⭐⭐⭐⭐⭐ |
-| Cost Optimization | 92/100 | ⭐⭐⭐⭐⭐ |
-| Performance Efficiency | 95/100 | ⭐⭐⭐⭐⭐ |
-| Operational Excellence | 94/100 | ⭐⭐⭐⭐⭐ |
+| Reliability | 98/100 | 5/5 |
+| Security | 96/100 | 5/5 |
+| Cost Optimization | 92/100 | 5/5 |
+| Performance Efficiency | 95/100 | 5/5 |
+| Operational Excellence | 94/100 | 5/5 |
 
-**🎖️ CERTIFIED: Ready for production deployment with enterprise security standards**
+**CERTIFIED: Ready for production deployment with enterprise security standards**
 
 ---
 
-## 💰 Cost Analysis
+## Cost Analysis
 
 ### **Monthly Cost Breakdown**
 - **Total Range**: $1,240 - $2,180/month
@@ -179,47 +179,47 @@ Following the optimization guide can reduce costs to **$1,500/month** while main
 
 ---
 
-## 📊 Key Features & Benefits
+## Key Features & Benefits
 
 ### **High Availability & Disaster Recovery**
-- 🎯 **99.99% SLA** with Availability Zones
-- 🔄 **<4 Hour RTO** with automated failover
-- 💾 **<1 Hour RPO** with continuous replication
-- 🌍 **Cross-Region Protection** (East US ↔ West US 2)
+- **99.99% SLA** with Availability Zones
+- **<4 Hour RTO** with automated failover
+- **<1 Hour RPO** with continuous replication
+- **Cross-Region Protection** (East US ↔ West US 2)
 
 ### **Security & Compliance**
-- 🛡️ **Enterprise Security** with defense-in-depth
-- 🔐 **Encryption Everywhere** (transit + rest)
-- 🚫 **Zero Trust Network** with micro-segmentation
-- 📋 **Compliance Ready** for SOC 2, ISO 27001
+- **Enterprise Security** with defense-in-depth
+- **Encryption Everywhere** (transit + rest)
+- **Zero Trust Network** with micro-segmentation
+- **Compliance Ready** for SOC 2, ISO 27001
 
 ### **Operational Excellence**
-- 📝 **Infrastructure as Code** (Terraform + Bicep)
-- 📈 **Comprehensive Monitoring** with health checks
-- 🤖 **Automation Ready** for CI/CD integration
-- 📚 **Complete Documentation** and runbooks
+- **Infrastructure as Code** (Terraform + Bicep)
+- **Comprehensive Monitoring** with health checks
+- **Automation Ready** for CI/CD integration
+- **Complete Documentation** and runbooks
 
 ### **Performance & Scalability**
-- ⚡ **Premium Storage** for optimal performance
-- 🔀 **Load Balancing** across multiple tiers
-- 📊 **Intelligent Auto-Scaling** with CPU, memory, and network triggers
-- 🤖 **Predictive Scaling** for production workloads
-- 🕐 **Time-based Scaling** profiles (business hours, weekends)
-- 🌐 **Global Load Balancing** with Traffic Manager
+- **Premium Storage** for optimal performance
+- **Load Balancing** across multiple tiers
+- **Intelligent Auto-Scaling** with CPU, memory, and network triggers
+- **Predictive Scaling** for production workloads
+- **Time-based Scaling** profiles (business hours, weekends)
+- **Global Load Balancing** with Traffic Manager
 
 ---
 
-## 🏆 Architecture Validation
+## Architecture Validation
 
 ### **Design Fidelity: 100%**
 The implementation provides complete architectural fidelity with:
 
-- ✅ **VM Replication** - All 6 VMs protected with Azure Site Recovery
-- ✅ **Database Replication** - MySQL master-slave with GTID across regions
-- ✅ **Storage Replication** - Geo-redundant storage (GRS) implementation
-- ✅ **Network Security** - Enhanced NSG rules for all replication traffic
-- ✅ **Load Balancing** - Multi-tier load balancer configuration
-- ✅ **Global Routing** - Traffic Manager with health monitoring
+- **VM Replication** - All 6 VMs protected with Azure Site Recovery
+- **Database Replication** - MySQL master-slave with GTID across regions
+- **Storage Replication** - Geo-redundant storage (GRS) implementation
+- **Network Security** - Enhanced NSG rules for all replication traffic
+- **Load Balancing** - Multi-tier load balancer configuration
+- **Global Routing** - Traffic Manager with health monitoring
 
 ### **Critical Gaps Fixed**
 1. **VM Replication**: Added complete Site Recovery VM protection (78% → 100%)
@@ -229,7 +229,7 @@ The implementation provides complete architectural fidelity with:
 
 ---
 
-## 📋 Deployment Checklist
+## Deployment Checklist
 
 ### **Pre-Deployment**
 - [ ] Azure subscription with appropriate permissions
@@ -252,7 +252,7 @@ The implementation provides complete architectural fidelity with:
 
 ---
 
-## 🔄 Disaster Recovery Testing
+## Disaster Recovery Testing
 
 ### **DR Test Procedures**
 1. **Test Failover**: Verify VM replication and failover capabilities
@@ -269,7 +269,7 @@ The implementation provides complete architectural fidelity with:
 
 ---
 
-## 📈 Performance Monitoring
+## Performance Monitoring
 
 ### **Key Metrics**
 - **Application Response Time** < 2 seconds
@@ -287,7 +287,7 @@ The implementation provides complete architectural fidelity with:
 
 ---
 
-## 🛠️ Maintenance & Operations
+## Maintenance & Operations
 
 ### **Regular Maintenance Tasks**
 - **Daily**: Monitor health dashboards and alerts
@@ -303,11 +303,11 @@ terraform apply -var="enable_vmss=true" -var="enable_auto_scaling=true"
 
 # Configure custom scaling thresholds
 terraform apply -var='auto_scaling_config={
-  web_tier = {
-    min_instances = 2
-    max_instances = 10
-    scale_out_cpu_threshold = 75
-  }
+web_tier = {
+min_instances = 2
+max_instances = 10
+scale_out_cpu_threshold = 75
+}
 }'
 
 # Update VM sizes for cost optimization
@@ -319,7 +319,7 @@ az vmss scale --name webapp-prod-primary-web-vmss --new-capacity 5
 
 ---
 
-## 🆘 Support & Troubleshooting
+## Support & Troubleshooting
 
 ### **Common Issues**
 - **VM Authentication**: Ensure password meets Azure complexity requirements
@@ -335,7 +335,7 @@ az vmss scale --name webapp-prod-primary-web-vmss --new-capacity 5
 
 ---
 
-## 📚 Documentation
+## Documentation
 
 ### **Detailed Documentation Available**
 - **Terraform Implementation Guide** - Complete IaC deployment instructions
@@ -351,7 +351,7 @@ az vmss scale --name webapp-prod-primary-web-vmss --new-capacity 5
 
 ---
 
-## 🎯 Success Metrics
+## Success Metrics
 
 ### **Business Value Delivered**
 - **$2.65M+ Protected**: Revenue protection through 99.99% uptime
@@ -367,16 +367,16 @@ az vmss scale --name webapp-prod-primary-web-vmss --new-capacity 5
 
 ---
 
-## 🏅 Project Certification
+## Project Certification
 
-**✅ This architecture implementation is CERTIFIED for production deployment**
+**This architecture implementation is CERTIFIED for production deployment**
 
 **Certifications Include:**
-- 🛡️ **Enterprise Security Validated** - Zero critical vulnerabilities
-- 🏗️ **Architecture Compliance Verified** - 100% design fidelity
-- 💰 **Cost Optimized** - Detailed optimization roadmap provided
-- 📊 **Production Ready** - Comprehensive testing and validation complete
-- 🎯 **Well-Architected Compliant** - 95/100 framework score achieved
+- **Enterprise Security Validated** - Zero critical vulnerabilities
+- **Architecture Compliance Verified** - 100% design fidelity
+- **Cost Optimized** - Detailed optimization roadmap provided
+- **Production Ready** - Comprehensive testing and validation complete
+- **Well-Architected Compliant** - 95/100 framework score achieved
 
 ---
 
@@ -385,4 +385,4 @@ az vmss scale --name webapp-prod-primary-web-vmss --new-capacity 5
 **Maintainer**: Platform Engineering Team
 **License**: MIT (for reference architecture)
 
-**Ready for immediate production deployment! 🚀**
+**Ready for immediate production deployment!**

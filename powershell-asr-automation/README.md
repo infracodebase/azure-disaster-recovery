@@ -1,42 +1,42 @@
 # PowerShell ASR Networking Automation - Universal Infrastructure Support
 
-## 🌐 Universal Infrastructure Compatibility
+## Universal Infrastructure Compatibility
 
 This PowerShell automation suite provides **comprehensive networking configuration backup and restoration** for Azure Site Recovery (ASR) scenarios, working seamlessly with **both Terraform and Bicep** infrastructure deployments.
 
-### 🎯 Key Innovation: Infrastructure-Agnostic Design
+### TARGET Key Innovation: Infrastructure-Agnostic Design
 
 Unlike traditional disaster recovery solutions that work with only one infrastructure type, this suite **automatically detects** whether your infrastructure is deployed via:
 
-- **🔧 Terraform** - Hyphen-separated naming with primary/secondary patterns
-- **🏗️ Bicep** - Environment-region specific naming with region-based mapping
-- **🤖 Auto-Detection** - Intelligently identifies infrastructure type and applies appropriate logic
+- ** Terraform** - Hyphen-separated naming with primary/secondary patterns
+- ** Bicep** - Environment-region specific naming with region-based mapping
+- ** Auto-Detection** - Intelligently identifies infrastructure type and applies appropriate logic
 
 ---
 
-## 📁 Complete Solution Structure
+## Directory: Complete Solution Structure
 
 ```
 powershell-asr-automation/
-├── 📜 Core Scripts (Infrastructure-Agnostic)
-│   ├── Save-NetworkingConfig.ps1              # Universal backup script
-│   ├── Restore-NetworkingConfig.ps1           # Universal restoration script
-│   └── ASR-NetworkingAutomation.ps1           # Azure Automation runbook
+├── Core Scripts (Infrastructure-Agnostic)
+│ ├── Save-NetworkingConfig.ps1 # Universal backup script
+│ ├── Restore-NetworkingConfig.ps1 # Universal restoration script
+│ └── ASR-NetworkingAutomation.ps1 # Azure Automation runbook
 │
-├── 📚 Documentation & Guides
-│   ├── README.md                               # This comprehensive guide
-│   ├── TERRAFORM_EXAMPLES.md                  # Terraform-specific examples
-│   ├── BICEP_EXAMPLES.md                      # Bicep-specific examples
-│   └── ARCHITECTURE_GUIDE.md                  # Technical architecture details
+├── Documentation & Guides
+│ ├── README.md # This comprehensive guide
+│ ├── TERRAFORM_EXAMPLES.md # Terraform-specific examples
+│ ├── BICEP_EXAMPLES.md # Bicep-specific examples
+│ └── ARCHITECTURE_GUIDE.md # Technical architecture details
 │
-└── 🛠️ Setup & Installation
-    ├── Install-Module.ps1                     # Automated installer
-    └── Test-Infrastructure.ps1                # Infrastructure compatibility test
+└── Setup & Installation
+├── Install-Module.ps1 # Automated installer
+└── Test-Infrastructure.ps1 # Infrastructure compatibility test
 ```
 
 ---
 
-## 🚀 Quick Start Guide
+## Quick Start Guide
 
 ### Prerequisites
 
@@ -52,26 +52,26 @@ Set-AzContext -SubscriptionId "your-subscription-id"
 ### Universal Usage (Works with Both TF and Bicep)
 
 ```powershell
-# 🔍 Auto-detect infrastructure type and backup
+# Auto-detect infrastructure type and backup
 .\Save-NetworkingConfig.ps1 `
-    -ResourceGroupName "your-resource-group" `
-    -ProjectName "webapp" `
-    -Environment "prod"
+-ResourceGroupName "your-resource-group" `
+-ProjectName "webapp" `
+-Environment "prod"
 
-# 🔄 Auto-detect infrastructure type and restore
+# Auto-detect infrastructure type and restore
 .\Restore-NetworkingConfig.ps1 `
-    -ResourceGroupName "your-dr-resource-group"
+-ResourceGroupName "your-dr-resource-group"
 
-# 👁️ Preview changes before applying (recommended)
+# Preview changes before applying (recommended)
 .\Restore-NetworkingConfig.ps1 `
-    -ResourceGroupName "your-dr-resource-group" `
-    -DryRun `
-    -Detailed
+-ResourceGroupName "your-dr-resource-group" `
+-DryRun `
+-Detailed
 ```
 
 ---
 
-## 🏗️ Infrastructure-Specific Examples
+## Infrastructure-Specific Examples
 
 ### Terraform Infrastructure
 
@@ -82,17 +82,17 @@ Set-AzContext -SubscriptionId "your-subscription-id"
 
 # Backup (explicitly specify Terraform)
 .\Save-NetworkingConfig.ps1 `
-    -ResourceGroupName "webapp-prod-primary-rg" `
-    -SecondaryResourceGroupName "webapp-prod-secondary-rg" `
-    -InfrastructureType "terraform" `
-    -ProjectName "webapp" `
-    -Environment "prod"
+-ResourceGroupName "webapp-prod-primary-rg" `
+-SecondaryResourceGroupName "webapp-prod-secondary-rg" `
+-InfrastructureType "terraform" `
+-ProjectName "webapp" `
+-Environment "prod"
 
 # Restore with Terraform cross-region mapping
 .\Restore-NetworkingConfig.ps1 `
-    -ResourceGroupName "webapp-prod-secondary-rg" `
-    -InfrastructureType "terraform" `
-    -Force
+-ResourceGroupName "webapp-prod-secondary-rg" `
+-InfrastructureType "terraform" `
+-Force
 ```
 
 ### Bicep Infrastructure
@@ -104,23 +104,23 @@ Set-AzContext -SubscriptionId "your-subscription-id"
 
 # Backup (explicitly specify Bicep)
 .\Save-NetworkingConfig.ps1 `
-    -ResourceGroupName "webapp-prod-eastus-rg" `
-    -InfrastructureType "bicep" `
-    -ProjectName "webapp" `
-    -Environment "prod" `
-    -StorageAccountName "asrnetworkconfigs"
+-ResourceGroupName "webapp-prod-eastus-rg" `
+-InfrastructureType "bicep" `
+-ProjectName "webapp" `
+-Environment "prod" `
+-StorageAccountName "asrnetworkconfigs"
 
 # Restore with Bicep region-based mapping
 .\Restore-NetworkingConfig.ps1 `
-    -ResourceGroupName "webapp-prod-westus2-rg" `
-    -InfrastructureType "bicep" `
-    -StorageAccountName "asrnetworkconfigs" `
-    -StorageResourceGroupName "shared-services-rg"
+-ResourceGroupName "webapp-prod-westus2-rg" `
+-InfrastructureType "bicep" `
+-StorageAccountName "asrnetworkconfigs" `
+-StorageResourceGroupName "shared-services-rg"
 ```
 
 ---
 
-## 🤖 Intelligent Infrastructure Detection
+## Intelligent Infrastructure Detection
 
 ### Auto-Detection Algorithm
 
@@ -149,33 +149,33 @@ The scripts use sophisticated pattern recognition to identify infrastructure typ
 
 ---
 
-## 🎛️ Advanced Features
+## Advanced Features
 
 ### Comprehensive Configuration Coverage
 
 | Configuration Type | Terraform Support | Bicep Support | Auto-Mapping | Notes |
 |-------------------|------------------|---------------|-------------|-------|
-| **Application Security Groups** | ✅ | ✅ | ✅ | Full ASG membership preservation |
-| **Static Private IPs** | ✅ | ✅ | ✅ | Subnet-aware IP restoration |
-| **Static Public IPs** | ✅ | ✅ | ✅ | Public IP allocation preservation |
-| **Load Balancer Backend Pools** | ✅ | ✅ | ✅ | Cross-region LB pool mapping |
-| **Application Gateway Pools** | ✅ | ✅ | ✅ | App Gateway backend associations |
-| **Network Security Groups** | ✅ | ✅ | ℹ️ | NSG association documentation |
+| **Application Security Groups** | DONE | DONE | DONE | Full ASG membership preservation |
+| **Static Private IPs** | DONE | DONE | DONE | Subnet-aware IP restoration |
+| **Static Public IPs** | DONE | DONE | DONE | Public IP allocation preservation |
+| **Load Balancer Backend Pools** | DONE | DONE | DONE | Cross-region LB pool mapping |
+| **Application Gateway Pools** | DONE | DONE | DONE | App Gateway backend associations |
+| **Network Security Groups** | DONE | DONE | ℹ | NSG association documentation |
 
 ### Storage Integration
 
 ```powershell
 # Persistent configuration storage across regions
 .\Save-NetworkingConfig.ps1 `
-    -ResourceGroupName "prod-rg" `
-    -StorageAccountName "globalasrconfigs" `
-    -StorageResourceGroupName "shared-services-rg"
+-ResourceGroupName "prod-rg" `
+-StorageAccountName "globalasrconfigs" `
+-StorageResourceGroupName "shared-services-rg"
 
 # Download and restore from storage
 .\Restore-NetworkingConfig.ps1 `
-    -ResourceGroupName "dr-rg" `
-    -StorageAccountName "globalasrconfigs" `
-    -StorageResourceGroupName "shared-services-rg"
+-ResourceGroupName "dr-rg" `
+-StorageAccountName "globalasrconfigs" `
+-StorageResourceGroupName "shared-services-rg"
 ```
 
 ### Selective Operations
@@ -183,20 +183,20 @@ The scripts use sophisticated pattern recognition to identify infrastructure typ
 ```powershell
 # Process specific VMs only
 .\Save-NetworkingConfig.ps1 `
-    -ResourceGroupName "prod-rg" `
-    -VmNames @("critical-vm-1", "critical-vm-2", "database-vm")
+-ResourceGroupName "prod-rg" `
+-VmNames @("critical-vm-1", "critical-vm-2", "database-vm")
 
 # Target specific networking components
 .\Save-NetworkingConfig.ps1 `
-    -ResourceGroupName "prod-rg" `
-    -IncludeAppGateway `
-    -IncludeLoadBalancer `
-    -Detailed
+-ResourceGroupName "prod-rg" `
+-IncludeAppGateway `
+-IncludeLoadBalancer `
+-Detailed
 ```
 
 ---
 
-## 🔧 Azure Automation Integration
+## Azure Automation Integration
 
 ### Universal Runbook Support
 
@@ -205,25 +205,25 @@ The `ASR-NetworkingAutomation.ps1` script works with both infrastructure types i
 ```powershell
 # Pre-failover backup (works with any infrastructure)
 .\ASR-NetworkingAutomation.ps1 `
-    -Operation "Backup" `
-    -ResourceGroupName "webapp-prod-primary-rg" `
-    -StorageAccountName "asrnetworkconfigs" `
-    -StorageResourceGroupName "shared-services-rg"
+-Operation "Backup" `
+-ResourceGroupName "webapp-prod-primary-rg" `
+-StorageAccountName "asrnetworkconfigs" `
+-StorageResourceGroupName "shared-services-rg"
 
 # Post-failover restoration (auto-detects infrastructure type)
 .\ASR-NetworkingAutomation.ps1 `
-    -Operation "Restore" `
-    -ResourceGroupName "webapp-prod-secondary-rg" `
-    -StorageAccountName "asrnetworkconfigs" `
-    -StorageResourceGroupName "shared-services-rg"
+-Operation "Restore" `
+-ResourceGroupName "webapp-prod-secondary-rg" `
+-StorageAccountName "asrnetworkconfigs" `
+-StorageResourceGroupName "shared-services-rg"
 
 # Specify infrastructure type for optimal performance
 .\ASR-NetworkingAutomation.ps1 `
-    -Operation "Restore" `
-    -ResourceGroupName "webapp-prod-westus2-rg" `
-    -StorageAccountName "asrnetworkconfigs" `
-    -InfrastructureType "bicep" `
-    -DryRun $false
+-Operation "Restore" `
+-ResourceGroupName "webapp-prod-westus2-rg" `
+-StorageAccountName "asrnetworkconfigs" `
+-InfrastructureType "bicep" `
+-DryRun $false
 ```
 
 ### ASR Recovery Plan Integration
@@ -231,72 +231,72 @@ The `ASR-NetworkingAutomation.ps1` script works with both infrastructure types i
 #### For Terraform Infrastructure
 ```json
 {
-  "PreFailoverScript": {
-    "ScriptName": "ASR-NetworkingAutomation",
-    "Parameters": {
-      "Operation": "Backup",
-      "ResourceGroupName": "webapp-prod-primary-rg",
-      "StorageAccountName": "asrnetworkconfigs",
-      "InfrastructureType": "terraform"
-    }
-  },
-  "PostFailoverScript": {
-    "ScriptName": "ASR-NetworkingAutomation",
-    "Parameters": {
-      "Operation": "Restore",
-      "ResourceGroupName": "webapp-prod-secondary-rg",
-      "StorageAccountName": "asrnetworkconfigs",
-      "InfrastructureType": "terraform"
-    }
-  }
+"PreFailoverScript": {
+"ScriptName": "ASR-NetworkingAutomation",
+"Parameters": {
+"Operation": "Backup",
+"ResourceGroupName": "webapp-prod-primary-rg",
+"StorageAccountName": "asrnetworkconfigs",
+"InfrastructureType": "terraform"
+}
+},
+"PostFailoverScript": {
+"ScriptName": "ASR-NetworkingAutomation",
+"Parameters": {
+"Operation": "Restore",
+"ResourceGroupName": "webapp-prod-secondary-rg",
+"StorageAccountName": "asrnetworkconfigs",
+"InfrastructureType": "terraform"
+}
+}
 }
 ```
 
 #### For Bicep Infrastructure
 ```json
 {
-  "PreFailoverScript": {
-    "Parameters": {
-      "Operation": "Backup",
-      "ResourceGroupName": "webapp-prod-eastus-rg",
-      "InfrastructureType": "bicep"
-    }
-  },
-  "PostFailoverScript": {
-    "Parameters": {
-      "Operation": "Restore",
-      "ResourceGroupName": "webapp-prod-westus2-rg",
-      "InfrastructureType": "bicep"
-    }
-  }
+"PreFailoverScript": {
+"Parameters": {
+"Operation": "Backup",
+"ResourceGroupName": "webapp-prod-eastus-rg",
+"InfrastructureType": "bicep"
+}
+},
+"PostFailoverScript": {
+"Parameters": {
+"Operation": "Restore",
+"ResourceGroupName": "webapp-prod-westus2-rg",
+"InfrastructureType": "bicep"
+}
+}
 }
 ```
 
 ---
 
-## 📊 Configuration File Examples
+## Configuration File Examples
 
 ### Master Configuration (Universal Format)
 
 ```json
 {
-  "Timestamp": "20241201-143022",
-  "InfrastructureType": "terraform",
-  "ProjectName": "webapp",
-  "Environment": "prod",
-  "PrimaryResourceGroup": "webapp-prod-primary-rg",
-  "SecondaryResourceGroup": "webapp-prod-secondary-rg",
-  "ConfigurationFiles": [
-    "web-vm-1-networking-config-20241201-143022.json",
-    "web-vm-2-networking-config-20241201-143022.json"
-  ],
-  "CrossRegionMapping": {
-    "InfrastructureType": "terraform",
-    "MappingRules": {
-      "Pattern": "Simple primary/secondary replacement",
-      "Example": "web-lb-primary -> web-lb-secondary"
-    }
-  }
+"Timestamp": "20241201-143022",
+"InfrastructureType": "terraform",
+"ProjectName": "webapp",
+"Environment": "prod",
+"PrimaryResourceGroup": "webapp-prod-primary-rg",
+"SecondaryResourceGroup": "webapp-prod-secondary-rg",
+"ConfigurationFiles": [
+"web-vm-1-networking-config-20241201-143022.json",
+"web-vm-2-networking-config-20241201-143022.json"
+],
+"CrossRegionMapping": {
+"InfrastructureType": "terraform",
+"MappingRules": {
+"Pattern": "Simple primary/secondary replacement",
+"Example": "web-lb-primary -> web-lb-secondary"
+}
+}
 }
 ```
 
@@ -304,36 +304,36 @@ The `ASR-NetworkingAutomation.ps1` script works with both infrastructure types i
 
 ```json
 {
-  "VmName": "web-vm-1",
-  "VmId": "/subscriptions/.../virtualMachines/web-vm-1",
-  "InfrastructureType": "terraform",
-  "ProjectName": "webapp",
-  "Environment": "prod",
-  "NetworkInterfaces": [
-    {
-      "Name": "web-vm-1-nic",
-      "InfrastructureType": "terraform",
-      "ApplicationSecurityGroups": [
-        {
-          "AsgName": "web-tier-asg",
-          "IpConfigurationName": "ipconfig1"
-        }
-      ],
-      "LoadBalancerBackendPools": [
-        {
-          "LoadBalancerName": "web-lb-primary",
-          "SecondaryLoadBalancerName": "web-lb-secondary",
-          "BackendPoolName": "web-backend-pool"
-        }
-      ]
-    }
-  ]
+"VmName": "web-vm-1",
+"VmId": "/subscriptions/.../virtualMachines/web-vm-1",
+"InfrastructureType": "terraform",
+"ProjectName": "webapp",
+"Environment": "prod",
+"NetworkInterfaces": [
+{
+"Name": "web-vm-1-nic",
+"InfrastructureType": "terraform",
+"ApplicationSecurityGroups": [
+{
+"AsgName": "web-tier-asg",
+"IpConfigurationName": "ipconfig1"
+}
+],
+"LoadBalancerBackendPools": [
+{
+"LoadBalancerName": "web-lb-primary",
+"SecondaryLoadBalancerName": "web-lb-secondary",
+"BackendPoolName": "web-backend-pool"
+}
+]
+}
+]
 }
 ```
 
 ---
 
-## 🛡️ Security & Enterprise Features
+## Security & Enterprise Features
 
 ### Multi-Infrastructure Security
 
@@ -359,17 +359,17 @@ Test-AzurePermissions -ResourceGroups @("primary-rg", "secondary-rg")
 
 ---
 
-## 🔍 Testing & Validation
+## Testing & Validation
 
 ### Infrastructure Compatibility Testing
 
 ```powershell
 # Test script to validate your infrastructure compatibility
 .\Test-Infrastructure.ps1 `
-    -ResourceGroupName "your-rg" `
-    -TestInfrastructureDetection `
-    -TestCrossRegionMapping `
-    -ValidateResources
+-ResourceGroupName "your-rg" `
+-TestInfrastructureDetection `
+-TestCrossRegionMapping `
+-ValidateResources
 ```
 
 ### Dry-Run Validation
@@ -377,10 +377,10 @@ Test-AzurePermissions -ResourceGroups @("primary-rg", "secondary-rg")
 ```powershell
 # Safe testing without making changes
 .\Restore-NetworkingConfig.ps1 `
-    -ResourceGroupName "test-rg" `
-    -DryRun `
-    -Detailed `
-    -Force
+-ResourceGroupName "test-rg" `
+-DryRun `
+-Detailed `
+-Force
 
 # Output shows what would be changed:
 # [INFO] Infrastructure type: bicep
@@ -390,23 +390,23 @@ Test-AzurePermissions -ResourceGroups @("primary-rg", "secondary-rg")
 
 ---
 
-## 🚀 Migration Scenarios
+## Migration Scenarios
 
 ### Terraform to Bicep Migration
 
 ```powershell
 # 1. Backup from Terraform infrastructure
 .\Save-NetworkingConfig.ps1 `
-    -ResourceGroupName "terraform-rg" `
-    -InfrastructureType "terraform"
+-ResourceGroupName "terraform-rg" `
+-InfrastructureType "terraform"
 
 # 2. Deploy new Bicep infrastructure
 
 # 3. Restore to Bicep infrastructure (with manual mapping)
 .\Restore-NetworkingConfig.ps1 `
-    -ResourceGroupName "bicep-rg" `
-    -InfrastructureType "bicep" `
-    -DryRun
+-ResourceGroupName "bicep-rg" `
+-InfrastructureType "bicep" `
+-DryRun
 ```
 
 ### Cross-Cloud Provider Preparation
@@ -414,14 +414,14 @@ Test-AzurePermissions -ResourceGroups @("primary-rg", "secondary-rg")
 ```powershell
 # Export configuration in universal format
 .\Save-NetworkingConfig.ps1 `
-    -ResourceGroupName "azure-rg" `
-    -ExportUniversalFormat `
-    -OutputPath "cross-cloud-configs/"
+-ResourceGroupName "azure-rg" `
+-ExportUniversalFormat `
+-OutputPath "cross-cloud-configs/"
 ```
 
 ---
 
-## 📞 Support & Troubleshooting
+## Support & Troubleshooting
 
 ### Infrastructure-Specific Troubleshooting
 
@@ -440,33 +440,33 @@ $DebugPreference = "Continue"
 
 # Test infrastructure detection
 .\Save-NetworkingConfig.ps1 `
-    -ResourceGroupName "test-rg" `
-    -InfrastructureType "auto" `
-    -Detailed `
-    -Verbose
+-ResourceGroupName "test-rg" `
+-InfrastructureType "auto" `
+-Detailed `
+-Verbose
 
 # Validate cross-region mapping
 .\Restore-NetworkingConfig.ps1 `
-    -ResourceGroupName "test-rg" `
-    -DryRun `
-    -Detailed `
-    -Verbose
+-ResourceGroupName "test-rg" `
+-DryRun `
+-Detailed `
+-Verbose
 ```
 
 ---
 
-## 🎉 Production Deployment Checklist
+## Production Deployment Checklist
 
 ### Universal Deployment Steps
 
-- [ ] **✅ Test both infrastructure types** in your environment
-- [ ] **✅ Validate auto-detection** works correctly
-- [ ] **✅ Configure storage account** for cross-region persistence
-- [ ] **✅ Set up Azure Automation** with managed identity
-- [ ] **✅ Test ASR Recovery Plans** with both infrastructure types
-- [ ] **✅ Configure monitoring** for both Terraform and Bicep scenarios
-- [ ] **✅ Train team** on infrastructure-agnostic operations
-- [ ] **✅ Document environment-specific** resource naming conventions
+- [ ] **DONE Test both infrastructure types** in your environment
+- [ ] **DONE Validate auto-detection** works correctly
+- [ ] **DONE Configure storage account** for cross-region persistence
+- [ ] **DONE Set up Azure Automation** with managed identity
+- [ ] **DONE Test ASR Recovery Plans** with both infrastructure types
+- [ ] **DONE Configure monitoring** for both Terraform and Bicep scenarios
+- [ ] **DONE Train team** on infrastructure-agnostic operations
+- [ ] **DONE Document environment-specific** resource naming conventions
 
 ### Infrastructure-Specific Validation
 
@@ -484,31 +484,31 @@ $DebugPreference = "Continue"
 
 ---
 
-## 🌟 Benefits of Universal Infrastructure Support
+## Benefits of Universal Infrastructure Support
 
-### ✅ **Unified Operations**
+### DONE **Unified Operations**
 - Single set of scripts for all infrastructure types
 - Consistent disaster recovery procedures
 - Reduced training and maintenance overhead
 
-### ✅ **Future-Proof Architecture**
+### DONE **Future-Proof Architecture**
 - Easy migration between infrastructure tools
 - Support for mixed environments (TF + Bicep)
 - Adaptable to new Azure deployment patterns
 
-### ✅ **Enterprise Flexibility**
+### DONE **Enterprise Flexibility**
 - Works with existing Terraform deployments
 - Compatible with new Bicep implementations
 - Supports gradual infrastructure modernization
 
-### ✅ **Operational Excellence**
+### DONE **Operational Excellence**
 - Intelligent auto-detection reduces errors
 - Cross-infrastructure knowledge transfer
 - Simplified disaster recovery testing
 
 ---
 
-## 📋 Version Information
+## Version Information
 
 - **Version**: 1.0.0
 - **Compatibility**: Terraform 0.12+ and Bicep 0.4+

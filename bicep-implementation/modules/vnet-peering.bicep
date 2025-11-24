@@ -31,32 +31,32 @@ param environment string
 
 // Primary to Secondary Peering
 resource primaryToSecondaryPeering 'Microsoft.Network/virtualNetworks/virtualNetworkPeerings@2023-09-01' = {
-  scope: resourceGroup(primaryResourceGroupName)
-  name: '${primaryVnetName}/${projectName}-${environment}-primary-to-secondary'
-  properties: {
-    allowVirtualNetworkAccess: true
-    allowForwardedTraffic: true
-    allowGatewayTransit: false
-    useRemoteGateways: false
-    remoteVirtualNetwork: {
-      id: secondaryVnetId
-    }
-  }
+scope: resourceGroup(primaryResourceGroupName)
+name: '${primaryVnetName}/${projectName}-${environment}-primary-to-secondary'
+properties: {
+allowVirtualNetworkAccess: true
+allowForwardedTraffic: true
+allowGatewayTransit: false
+useRemoteGateways: false
+remoteVirtualNetwork: {
+id: secondaryVnetId
+}
+}
 }
 
 // Secondary to Primary Peering
 resource secondaryToPrimaryPeering 'Microsoft.Network/virtualNetworks/virtualNetworkPeerings@2023-09-01' = {
-  scope: resourceGroup(secondaryResourceGroupName)
-  name: '${secondaryVnetName}/${projectName}-${environment}-secondary-to-primary'
-  properties: {
-    allowVirtualNetworkAccess: true
-    allowForwardedTraffic: true
-    allowGatewayTransit: false
-    useRemoteGateways: false
-    remoteVirtualNetwork: {
-      id: primaryVnetId
-    }
-  }
+scope: resourceGroup(secondaryResourceGroupName)
+name: '${secondaryVnetName}/${projectName}-${environment}-secondary-to-primary'
+properties: {
+allowVirtualNetworkAccess: true
+allowForwardedTraffic: true
+allowGatewayTransit: false
+useRemoteGateways: false
+remoteVirtualNetwork: {
+id: primaryVnetId
+}
+}
 }
 
 // Outputs

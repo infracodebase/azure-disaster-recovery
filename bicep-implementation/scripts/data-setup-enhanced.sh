@@ -11,13 +11,13 @@ REGION=$(echo $INSTANCE_METADATA | jq -r '.compute.location')
 
 # Determine if this is master or slave based on VM name
 if [[ $INSTANCE_NAME == *"-data-vm-1" ]]; then
-    DB_ROLE="master"
-    SERVER_ID=1
-    echo "Configuring as MySQL MASTER server"
+DB_ROLE="master"
+SERVER_ID=1
+echo "Configuring as MySQL MASTER server"
 else
-    DB_ROLE="slave"
-    SERVER_ID=2
-    echo "Configuring as MySQL SLAVE server"
+DB_ROLE="slave"
+SERVER_ID=2
+echo "Configuring as MySQL SLAVE server"
 fi
 
 # Log configuration start
@@ -88,8 +88,8 @@ systemctl start mysql
 
 # Wait for MySQL to be ready
 until mysqladmin ping >/dev/null 2>&1; do
-  echo "Waiting for MySQL to be ready..."
-  sleep 2
+echo "Waiting for MySQL to be ready..."
+sleep 2
 done
 
 # Set root password and secure installation
@@ -115,43 +115,43 @@ USE webapp;
 
 -- Create sample tables
 CREATE TABLE IF NOT EXISTS users (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(50) NOT NULL UNIQUE,
-    email VARCHAR(100) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    INDEX idx_username (username),
-    INDEX idx_email (email)
+id INT AUTO_INCREMENT PRIMARY KEY,
+username VARCHAR(50) NOT NULL UNIQUE,
+email VARCHAR(100) NOT NULL,
+created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+INDEX idx_username (username),
+INDEX idx_email (email)
 );
 
 CREATE TABLE IF NOT EXISTS sessions (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT,
-    session_token VARCHAR(255) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    expires_at TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-    INDEX idx_session_token (session_token),
-    INDEX idx_expires_at (expires_at),
-    INDEX idx_user_id (user_id)
+id INT AUTO_INCREMENT PRIMARY KEY,
+user_id INT,
+session_token VARCHAR(255) NOT NULL,
+created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+expires_at TIMESTAMP,
+FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+INDEX idx_session_token (session_token),
+INDEX idx_expires_at (expires_at),
+INDEX idx_user_id (user_id)
 );
 
 CREATE TABLE IF NOT EXISTS app_metrics (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    metric_name VARCHAR(100) NOT NULL,
-    metric_value DECIMAL(10,2),
-    recorded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    INDEX idx_metric_name (metric_name),
-    INDEX idx_recorded_at (recorded_at)
+id INT AUTO_INCREMENT PRIMARY KEY,
+metric_name VARCHAR(100) NOT NULL,
+metric_value DECIMAL(10,2),
+recorded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+INDEX idx_metric_name (metric_name),
+INDEX idx_recorded_at (recorded_at)
 );
 
 -- Create replication health table
 CREATE TABLE IF NOT EXISTS replication_health (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    check_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    master_status VARCHAR(50),
-    slave_status VARCHAR(50),
-    lag_seconds INT DEFAULT 0
+id INT AUTO_INCREMENT PRIMARY KEY,
+check_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+master_status VARCHAR(50),
+slave_status VARCHAR(50),
+lag_seconds INT DEFAULT 0
 );
 
 FLUSH PRIVILEGES;
@@ -159,13 +159,13 @@ EOF
 
 # Configure replication based on role
 if [ "$DB_ROLE" = "master" ]; then
-    echo "Configuring MySQL Master..."
+echo "Configuring MySQL Master..."
 
-    # Get master status for slave configuration
-    mysql -u root -pRootPassword123! -e "SHOW MASTER STATUS;" > /tmp/master_status.txt
+# Get master status for slave configuration
+mysql -u root -pRootPassword123! -e "SHOW MASTER STATUS;" > /tmp/master_status.txt
 
-    # Insert sample data on master only
-    mysql -u root -pRootPassword123! webapp << 'EOF'
+# Insert sample data on master only
+mysql -u root -pRootPassword123! webapp << 'EOF'
 INSERT IGNORE INTO users (username, email) VALUES
 ('admin', 'admin@example.com'),
 ('testuser', 'test@example.com'),
@@ -180,93 +180,93 @@ INSERT IGNORE INTO app_metrics (metric_name, metric_value) VALUES
 ('master_writes_per_second', 15.3);
 EOF
 
-    echo "Master configuration completed."
+echo "Master configuration completed."
 
-    # Create script to show master status
-    cat > /usr/local/bin/show-master-status.sh << 'EOF'
+# Create script to show master status
+cat > /usr/local/bin/show-master-status.sh << 'EOF'
 #!/bin/bash
 mysql -u root -pRootPassword123! -e "SHOW MASTER STATUS\G"
 mysql -u root -pRootPassword123! -e "SHOW SLAVE HOSTS\G"
 EOF
-    chmod +x /usr/local/bin/show-master-status.sh
+chmod +x /usr/local/bin/show-master-status.sh
 
 elif [ "$DB_ROLE" = "slave" ]; then
-    echo "Configuring MySQL Slave..."
+echo "Configuring MySQL Slave..."
 
-    # Wait for master to be available and get replication info
-    MASTER_IP="10.0.3.4"  # This would be the master IP from load balancer
+# Wait for master to be available and get replication info
+MASTER_IP="10.0.3.4" # This would be the master IP from load balancer
 
-    # Wait for master to be ready
-    echo "Waiting for master database at $MASTER_IP..."
-    while ! nc -z $MASTER_IP 3306; do
-        echo "Master not ready, waiting..."
-        sleep 5
-    done
+# Wait for master to be ready
+echo "Waiting for master database at $MASTER_IP..."
+while ! nc -z $MASTER_IP 3306; do
+echo "Master not ready, waiting..."
+sleep 5
+done
 
-    echo "Master is ready, configuring slave replication..."
+echo "Master is ready, configuring slave replication..."
 
-    # Configure slave to replicate from master
-    mysql -u root -pRootPassword123! << EOF
+# Configure slave to replicate from master
+mysql -u root -pRootPassword123! << EOF
 CHANGE MASTER TO
-    MASTER_HOST='$MASTER_IP',
-    MASTER_USER='replication',
-    MASTER_PASSWORD='ReplicationPassword123!',
-    MASTER_AUTO_POSITION=1;
+MASTER_HOST='$MASTER_IP',
+MASTER_USER='replication',
+MASTER_PASSWORD='ReplicationPassword123!',
+MASTER_AUTO_POSITION=1;
 
 START SLAVE;
 EOF
 
-    # Create script to show slave status
-    cat > /usr/local/bin/show-slave-status.sh << 'EOF'
+# Create script to show slave status
+cat > /usr/local/bin/show-slave-status.sh << 'EOF'
 #!/bin/bash
 mysql -u root -pRootPassword123! -e "SHOW SLAVE STATUS\G"
 EOF
-    chmod +x /usr/local/bin/show-slave-status.sh
+chmod +x /usr/local/bin/show-slave-status.sh
 
-    echo "Slave configuration completed."
+echo "Slave configuration completed."
 fi
 
 # Configure firewall if enabled
 if command -v ufw >/dev/null 2>&1; then
-    ufw allow from 10.0.0.0/8 to any port 3306
-    # Allow replication traffic between database servers
-    ufw allow from 10.0.3.0/24 to any port 3306
-    ufw allow from 10.1.3.0/24 to any port 3306
+ufw allow from 10.0.0.0/8 to any port 3306
+# Allow replication traffic between database servers
+ufw allow from 10.0.3.0/24 to any port 3306
+ufw allow from 10.1.3.0/24 to any port 3306
 fi
 
 # Set up data directory on additional disk (if available)
 if [ -e /dev/disk/azure/scsi1/lun0 ]; then
-    echo "Configuring additional disk for MySQL data..."
+echo "Configuring additional disk for MySQL data..."
 
-    # Format and mount additional disk
-    parted /dev/disk/azure/scsi1/lun0 mklabel gpt
-    parted -a opt /dev/disk/azure/scsi1/lun0 mkpart primary ext4 0% 100%
-    mkfs.ext4 /dev/disk/azure/scsi1/lun0-part1
+# Format and mount additional disk
+parted /dev/disk/azure/scsi1/lun0 mklabel gpt
+parted -a opt /dev/disk/azure/scsi1/lun0 mkpart primary ext4 0% 100%
+mkfs.ext4 /dev/disk/azure/scsi1/lun0-part1
 
-    # Create mount point and backup current data
-    mkdir -p /mnt/mysql-data
-    mount /dev/disk/azure/scsi1/lun0-part1 /mnt/mysql-data
+# Create mount point and backup current data
+mkdir -p /mnt/mysql-data
+mount /dev/disk/azure/scsi1/lun0-part1 /mnt/mysql-data
 
-    # Add to fstab for persistent mounting
-    echo "/dev/disk/azure/scsi1/lun0-part1 /mnt/mysql-data ext4 defaults,nofail 0 2" >> /etc/fstab
+# Add to fstab for persistent mounting
+echo "/dev/disk/azure/scsi1/lun0-part1 /mnt/mysql-data ext4 defaults,nofail 0 2" >> /etc/fstab
 
-    # Stop MySQL, copy data, and update configuration
-    systemctl stop mysql
-    cp -R /var/lib/mysql/* /mnt/mysql-data/
-    chown -R mysql:mysql /mnt/mysql-data
+# Stop MySQL, copy data, and update configuration
+systemctl stop mysql
+cp -R /var/lib/mysql/* /mnt/mysql-data/
+chown -R mysql:mysql /mnt/mysql-data
 
-    # Update MySQL data directory
-    sed -i 's|datadir.*|datadir = /mnt/mysql-data|' /etc/mysql/mysql.conf.d/mysqld.cnf
+# Update MySQL data directory
+sed -i 's|datadir.*|datadir = /mnt/mysql-data|' /etc/mysql/mysql.conf.d/mysqld.cnf
 
-    # Update AppArmor profile if present
-    if [ -f /etc/apparmor.d/usr.sbin.mysqld ]; then
-        sed -i '/\/var\/lib\/mysql\//a\ \ /mnt/mysql-data/ r,' /etc/apparmor.d/usr.sbin.mysqld
-        sed -i '/\/var\/lib\/mysql\//a\ \ /mnt/mysql-data/** rwk,' /etc/apparmor.d/usr.sbin.mysqld
-        systemctl reload apparmor
-    fi
+# Update AppArmor profile if present
+if [ -f /etc/apparmor.d/usr.sbin.mysqld ]; then
+sed -i '/\/var\/lib\/mysql\//a\ \ /mnt/mysql-data/ r,' /etc/apparmor.d/usr.sbin.mysqld
+sed -i '/\/var\/lib\/mysql\//a\ \ /mnt/mysql-data/** rwk,' /etc/apparmor.d/usr.sbin.mysqld
+systemctl reload apparmor
+fi
 
-    systemctl start mysql
-    echo "Additional disk configuration completed."
+systemctl start mysql
+echo "Additional disk configuration completed."
 fi
 
 # Set up database backup script
@@ -282,11 +282,11 @@ mkdir -p $BACKUP_DIR
 
 # Create backup
 if [ "$ROLE_SUFFIX" = "master" ]; then
-    # Master backup with binary log position
-    mysqldump -u root -pRootPassword123! --single-transaction --routines --triggers --master-data=2 webapp > $BACKUP_FILE
+# Master backup with binary log position
+mysqldump -u root -pRootPassword123! --single-transaction --routines --triggers --master-data=2 webapp > $BACKUP_FILE
 else
-    # Slave backup
-    mysqldump -u root -pRootPassword123! --single-transaction --routines --triggers webapp > $BACKUP_FILE
+# Slave backup
+mysqldump -u root -pRootPassword123! --single-transaction --routines --triggers webapp > $BACKUP_FILE
 fi
 
 # Compress backup
@@ -317,34 +317,34 @@ cat > /usr/local/bin/db-monitor.sh << EOF
 LOG_FILE="/var/log/db-monitor.log"
 
 while true; do
-    # Check if MySQL is running
-    if systemctl is-active --quiet mysql; then
-        # Test database connection
-        if mysql -u monitor -pMonitorPassword123! -e "SELECT 1" > /dev/null 2>&1; then
-            echo "\$(date): Database health check passed" >> \$LOG_FILE
+# Check if MySQL is running
+if systemctl is-active --quiet mysql; then
+# Test database connection
+if mysql -u monitor -pMonitorPassword123! -e "SELECT 1" > /dev/null 2>&1; then
+echo "\$(date): Database health check passed" >> \$LOG_FILE
 
-            # Check replication status
-            if [ "$DB_ROLE" = "master" ]; then
-                # Master monitoring
-                SLAVE_COUNT=\$(mysql -u monitor -pMonitorPassword123! -e "SHOW SLAVE HOSTS" | wc -l)
-                echo "\$(date): Master - Connected slaves: \$((SLAVE_COUNT-1))" >> \$LOG_FILE
-            else
-                # Slave monitoring
-                SLAVE_STATUS=\$(mysql -u monitor -pMonitorPassword123! -e "SHOW SLAVE STATUS\G" | grep "Slave_SQL_Running:" | awk '{print \$2}')
-                SLAVE_LAG=\$(mysql -u monitor -pMonitorPassword123! -e "SHOW SLAVE STATUS\G" | grep "Seconds_Behind_Master:" | awk '{print \$2}')
-                echo "\$(date): Slave - SQL Running: \$SLAVE_STATUS, Lag: \$${SLAVE_LAG}s" >> \$LOG_FILE
+# Check replication status
+if [ "$DB_ROLE" = "master" ]; then
+# Master monitoring
+SLAVE_COUNT=\$(mysql -u monitor -pMonitorPassword123! -e "SHOW SLAVE HOSTS" | wc -l)
+echo "\$(date): Master - Connected slaves: \$((SLAVE_COUNT-1))" >> \$LOG_FILE
+else
+# Slave monitoring
+SLAVE_STATUS=\$(mysql -u monitor -pMonitorPassword123! -e "SHOW SLAVE STATUS\G" | grep "Slave_SQL_Running:" | awk '{print \$2}')
+SLAVE_LAG=\$(mysql -u monitor -pMonitorPassword123! -e "SHOW SLAVE STATUS\G" | grep "Seconds_Behind_Master:" | awk '{print \$2}')
+echo "\$(date): Slave - SQL Running: \$SLAVE_STATUS, Lag: \$${SLAVE_LAG}s" >> \$LOG_FILE
 
-                # Record replication health
-                mysql -u monitor -pMonitorPassword123! webapp -e "INSERT INTO replication_health (slave_status, lag_seconds) VALUES ('\$SLAVE_STATUS', \$SLAVE_LAG)" 2>/dev/null || true
-            fi
-        else
-            echo "\$(date): Database connection failed" >> \$LOG_FILE
-        fi
-    else
-        echo "\$(date): MySQL service not running" >> \$LOG_FILE
-        systemctl restart mysql
-    fi
-    sleep 60
+# Record replication health
+mysql -u monitor -pMonitorPassword123! webapp -e "INSERT INTO replication_health (slave_status, lag_seconds) VALUES ('\$SLAVE_STATUS', \$SLAVE_LAG)" 2>/dev/null || true
+fi
+else
+echo "\$(date): Database connection failed" >> \$LOG_FILE
+fi
+else
+echo "\$(date): MySQL service not running" >> \$LOG_FILE
+systemctl restart mysql
+fi
+sleep 60
 done
 EOF
 
@@ -372,33 +372,33 @@ systemctl start db-monitor.service
 # Configure log rotation
 cat > /etc/logrotate.d/mysql-custom << 'EOF'
 /var/log/mysql-backup.log {
-    weekly
-    missingok
-    rotate 12
-    compress
-    delaycompress
-    notifempty
-    create 644 root root
+weekly
+missingok
+rotate 12
+compress
+delaycompress
+notifempty
+create 644 root root
 }
 
 /var/log/db-monitor.log {
-    daily
-    missingok
-    rotate 30
-    compress
-    delaycompress
-    notifempty
-    create 644 root root
+daily
+missingok
+rotate 30
+compress
+delaycompress
+notifempty
+create 644 root root
 }
 
 /var/log/mysql-setup.log {
-    weekly
-    missingok
-    rotate 4
-    compress
-    delaycompress
-    notifempty
-    create 644 root root
+weekly
+missingok
+rotate 4
+compress
+delaycompress
+notifempty
+create 644 root root
 }
 EOF
 
@@ -408,23 +408,23 @@ cat > /usr/local/bin/check-replication.sh << 'EOF'
 # Replication health check script
 
 if [ "$1" = "master" ]; then
-    echo "=== MASTER STATUS ==="
-    mysql -u root -pRootPassword123! -e "SHOW MASTER STATUS\G"
-    echo ""
-    echo "=== CONNECTED SLAVES ==="
-    mysql -u root -pRootPassword123! -e "SHOW SLAVE HOSTS\G"
-    echo ""
-    echo "=== BINARY LOG STATUS ==="
-    mysql -u root -pRootPassword123! -e "SHOW BINARY LOGS;"
+echo "=== MASTER STATUS ==="
+mysql -u root -pRootPassword123! -e "SHOW MASTER STATUS\G"
+echo ""
+echo "=== CONNECTED SLAVES ==="
+mysql -u root -pRootPassword123! -e "SHOW SLAVE HOSTS\G"
+echo ""
+echo "=== BINARY LOG STATUS ==="
+mysql -u root -pRootPassword123! -e "SHOW BINARY LOGS;"
 elif [ "$1" = "slave" ]; then
-    echo "=== SLAVE STATUS ==="
-    mysql -u root -pRootPassword123! -e "SHOW SLAVE STATUS\G"
-    echo ""
-    echo "=== RECENT REPLICATION HEALTH ==="
-    mysql -u root -pRootPassword123! webapp -e "SELECT * FROM replication_health ORDER BY check_time DESC LIMIT 10;"
+echo "=== SLAVE STATUS ==="
+mysql -u root -pRootPassword123! -e "SHOW SLAVE STATUS\G"
+echo ""
+echo "=== RECENT REPLICATION HEALTH ==="
+mysql -u root -pRootPassword123! webapp -e "SELECT * FROM replication_health ORDER BY check_time DESC LIMIT 10;"
 else
-    echo "Usage: $0 [master|slave]"
-    echo "Current role: $(cat /tmp/mysql_role 2>/dev/null || echo 'unknown')"
+echo "Usage: $0 [master|slave]"
+echo "Current role: $(cat /tmp/mysql_role 2>/dev/null || echo 'unknown')"
 fi
 EOF
 
@@ -437,9 +437,9 @@ echo "Replication role: $DB_ROLE, Server ID: $SERVER_ID" >> /var/log/mysql-setup
 # Test replication status
 sleep 5
 if [ "$DB_ROLE" = "slave" ]; then
-    /usr/local/bin/check-replication.sh slave >> /var/log/mysql-setup.log
+/usr/local/bin/check-replication.sh slave >> /var/log/mysql-setup.log
 else
-    /usr/local/bin/check-replication.sh master >> /var/log/mysql-setup.log
+/usr/local/bin/check-replication.sh master >> /var/log/mysql-setup.log
 fi
 
 echo "Enhanced data tier setup with replication completed successfully"

@@ -1,6 +1,6 @@
 # PowerShell ASR Networking Automation - Quick Start Guide
 
-## 🚀 Quick Start Guide
+## Quick Start Guide
 
 ### Prerequisites Checklist
 
